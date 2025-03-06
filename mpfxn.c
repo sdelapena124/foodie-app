@@ -203,8 +203,11 @@ verifyProfile()
     User p;
     int success = 0;
     char passwordConfirm[21];
+    FILE *userFile = fopen("user.txt", "r");
 
     //username input
+    if (userFile == NULL)
+    {
     while (success == 0)
     {
         printf("Enter Username: "); //can it have spaces or no idk
@@ -358,6 +361,24 @@ verifyProfile()
     }
 
     printf("Successful account creation!\n");
+    
+    userFile = fopen("user.txt", "w");
+        if (userFile != NULL) 
+		{
+            fprintf(userFile, "%s\n%s\n%s\n%s\n%s\n", p.username, p.pass, p.name, p.email, p.number);
+            fclose(userFile);
+        } 
+		else 
+		{
+            printf("Error saving user data.\n");
+        }
+	}
+	else 
+	{ // Load existing user profile
+        fscanf(userFile, "%50s %20s %80s%160s %30s %11s\n", p.username, p.pass, p.name, p.email, p.number);
+        fclose(userFile);
+        printf("User profile loaded.\n");
+    }
 
 
     return p;
@@ -368,28 +389,37 @@ verifyProfile()
 int
 verifyUser(User p)
 {
-    int success;
-    int i;
-    char str[21] = "";
+    int success = 0;
+    int attempts = 0;
+    int maxAttempts = 3;
+    char verifyPass[21];
+    char verifyUser[51];
 
-    for(i = 0; i < 3; i++)
+    while (attempts < maxAttempts && !success)
     {
+    	printf("Enter username: ");
+        scanf("%50s", verifyUser);
+        
         printf("Enter password: ");
-        scanf("%s", str);
+        scanf("%20s", verifyPass);
 
-        if (strcmp(p.pass, str) != 0 && i < 3)
+        if (strcmp(p.pass, verifyPass) != 0 || strcmp(p.username, verifyUser) != 0)
         {
-            printf("Password does not match!\n");
+            printf("Password and/or username does not match!\n");
+            attempts++;
         }
-        else if (strcmp(p.pass, str) == 0)
+        else if (strcmp(p.pass, verifyPass) == 0 && strcmp(p.username, verifyUser) == 0)
         {
             printf("Welcome!\n");
-            return success;
+            success = 1;
         }
     }
     
-    printf("Exceeded 3 attempts. Program will now terminate.\n");
-
+    if (!success)
+    {
+    	printf("Number of attempts reached. Program will now terminate!");
+	}
+	
     return success;
 }
 
