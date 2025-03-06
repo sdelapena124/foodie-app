@@ -205,9 +205,15 @@ verifyProfile()
     char passwordConfirm[21];
     FILE *userFile = fopen("user.txt", "r");
 
-    //username input
-    if (userFile == NULL)
+    if (userFile != NULL)  // If file exists, load user data and return
     {
+        fscanf(userFile, "%50s %20s %80[^\n] %30s %11s", 
+               p.username, p.pass, p.name, p.email, p.number);
+        fclose(userFile);
+        printf("User profile loaded.\n");
+        return p;
+    }
+    
     while (success == 0)
     {
         printf("Enter Username: "); //can it have spaces or no idk
@@ -372,14 +378,6 @@ verifyProfile()
 		{
             printf("Error saving user data.\n");
         }
-	}
-	else 
-	{ // Load existing user profile
-        fscanf(userFile, "%50s %20s %80s%160s %30s %11s\n", p.username, p.pass, p.name, p.email, p.number);
-        fclose(userFile);
-        printf("User profile loaded.\n");
-    }
-
 
     return p;
 }
