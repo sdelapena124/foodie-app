@@ -10,7 +10,8 @@ int
 main()
 {
 	User profile;
-    FILE *userFile = fopen("user.txt", "r");
+	foodLog food;
+    FILE *userFile = fopen("user.dat", "r");
 
     if (userFile != NULL) 
     {
@@ -20,7 +21,8 @@ main()
         
         if (loginSuccessful)
         {
-            printf("MENU\n");
+            printf("\n\nMENU\n");
+            food = verifyFood();
         }
         else
         {
@@ -36,7 +38,8 @@ main()
 
         if (loginSuccessful)
         {
-            printf("MENU\n");
+            printf("\n\nMENU\n");
+            food = verifyFood();
         }
         else
         {

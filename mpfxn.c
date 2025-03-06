@@ -91,6 +91,7 @@ withinBounds(char *str, int lowerLimit, int upperLimit)
     return 1;
 }
 
+
 /* func to check if password is valid */
 int
 verifyPass(char *str)
@@ -195,15 +196,219 @@ int verifyEmail (char *str)
     return 1;  
 }
 
+int isLeapYear(int year) 
+{
+    // Leap year: divisible by 4 AND (not divisible by 100 OR divisible by 400)
+    return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
+}
+
+int isValidDate (char *str)
+{
+	int i;
+	int length = strlen(str);
+	int maxDays;
+	
+	if (length != 10)
+	{
+		return 0;
+	}
+	
+	for (i = 0; i < length; i++)
+	{
+		if (str[2] != '/' && str[5] != '/')
+		{
+			return 0;
+		}
+		else if (i != 2 && i != 5) 
+		{
+            if (str[i] < '0' || str[i] > '9') 
+			{
+                return 0; 
+            }		
+		}
+	}
+	
+	int month = (str[0] - '0') * 10 + (str[1] - '0');
+    int day = (str[3] - '0') * 10 + (str[4] - '0');
+    int year = (str[6] - '0') * 1000 + (str[7] - '0') * 100 + (str[8] - '0') * 10 + (str[9] - '0');
+
+    //month checking
+    if (month < 1 || month > 12)
+    {
+		return 3;
+	}
+
+    //year checking
+    if (year < 1900 || year > 2099) 
+	{
+		return 3;
+	}
+
+    //day checking
+    
+    if (month == 2) //Feb
+	{
+        maxDays = isLeapYear(year) ? 29 : 28;
+    } 
+	else if (month == 4 || month == 6 || month == 9 || month == 11) // Apr, Jun, Sep, Nov
+	{ 
+        maxDays = 30;
+    } 
+	else // Jan, Mar, May, Jul, Aug, Oct, Dec
+	{
+        maxDays = 31;
+    }
+
+    if (day < 1 || day > maxDays) 
+	{
+		return 3;
+	}
+
+    return 1;
+	
+}
+
+//Function for taking input for food
+foodLog verifyFood ()
+{
+	foodLog f;
+    int success = 0;
+    
+    //Food Name
+	while (success == 0)
+    {
+        printf("Enter Food Name: ");
+        scanf(" %[^\n]s", f.name);
+
+        if (isAlphanumeric(f.name) == 1 && withinBounds(f.name, 3, 50))
+        {
+            success = 1;
+        }
+        else
+        {
+            printf("Food name must only contain between 3 - 50 alphanumeric characters!\n");
+        }
+    }
+
+    success = 0;
+    
+    //Food Type
+    while (success == 0)
+    {
+        printf("Enter Food Type (a - appetizer, m - main course, d - dessert): ");
+        scanf(" %c", &f.type);
+
+        if (f.type == 'a' || f.type == 'm' || f.type == 'd')
+        {
+            success = 1;
+        }
+        else
+        {
+            printf("Food name must be between a (appetizer), m(main course), or d (dessert)!\n");
+        }
+    }
+	
+	success = 0;
+	
+	//Number of Times Eaten
+	while (success == 0)
+	{
+		printf("Number of times eaten: ");
+        scanf(" %d", &f.timesEaten);
+        
+        if (f.timesEaten > 0)
+        {
+        	success = 1;
+		}
+		else
+		{
+			printf("Number of times eaten must be a positive integer!\n");
+		}
+		
+		//smegma clear buffer
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+        //smegma clear buffer
+	}
+	
+	success = 0;
+	
+	//Date First Tried
+	while (success == 0)
+	{
+		printf("Date First Tried (mm/dd/yyyy): ");
+        scanf("%10s", f.ftDate);
+        
+        if (isValidDate(f.ftDate) == 0)
+        {
+        	printf("Date must be in mm/dd/yyyy format and must only contain digits.\n");
+		}
+		else if (isValidDate(f.ftDate) == 3)
+		{
+			printf("Invalid date! Please try again.\n");
+		}
+		else if (isValidDate(f.ftDate) == 1)
+		{
+			success = 1;
+		}
+		int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+	}
+	
+	success = 0;
+	
+	//Location First Tried
+	while (success == 0)
+	{
+		printf("Location First Tried: ");
+        scanf(" %[^\n]s", f.ftPlace);	
+		
+		int placeLength = strlen(f.ftPlace);
+		
+		if (placeLength > 0 && placeLength <= 30)
+		{
+			success = 1;
+		}
+		else
+		{
+			printf("Invalid location! Maximum number of characters is 30.\n");
+		}
+		int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+	}
+	
+	success = 0;
+	
+	//Description
+	while (success == 0)
+	{
+		printf("Description (overall impression of food): ");
+        scanf(" %[^\n]s", f.desc);	
+        
+        int descLength = strlen(f.desc);
+		
+		if (descLength > 0 && descLength <= 300)
+		{
+			success = 1;
+		}
+		else
+		{
+			printf("Invalid description! Maximum number of characters is 300.\n");
+		}
+		int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+	}
+}
 
 /* func for taking input and storing user info in the struct*/
+// ADD UI 
 User
 verifyProfile()
 {
     User p;
     int success = 0;
     char passwordConfirm[21];
-    FILE *userFile = fopen("user.txt", "r");
+    FILE *userFile = fopen("user.dat", "r");
 
     if (userFile != NULL)  // If file exists, load user data and return
     {
@@ -368,7 +573,7 @@ verifyProfile()
 
     printf("Successful account creation!\n");
     
-    userFile = fopen("user.txt", "w");
+    userFile = fopen("user.dat", "w");
         if (userFile != NULL) 
 		{
             fprintf(userFile, "%s\n%s\n%s\n%s\n%s\n", p.username, p.pass, p.name, p.email, p.number);
@@ -383,7 +588,7 @@ verifyProfile()
 }
 
 
-//still need to add more features
+//User log-in once registration is done
 int
 verifyUser(User p)
 {
@@ -403,21 +608,23 @@ verifyUser(User p)
 
         if (strcmp(p.pass, verifyPass) != 0 || strcmp(p.username, verifyUser) != 0)
         {
-            printf("Password and/or username does not match!\n");
             attempts++;
+            printf("Incorrect username and/or password! Attempt %d / %d\n", attempts, maxAttempts);
         }
         else if (strcmp(p.pass, verifyPass) == 0 && strcmp(p.username, verifyUser) == 0)
         {
-            printf("Welcome!\n");
+            printf("\n\nWelcome!\n");
             success = 1;
         }
     }
     
     if (!success)
     {
-    	printf("Number of attempts reached. Program will now terminate!");
+    	printf("\n\nNumber of attempts reached. Press any key and the program will terminate!\n\n");
 	}
 	
     return success;
 }
+
+
 
