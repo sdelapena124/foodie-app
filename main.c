@@ -11,6 +11,7 @@ main()
 {
 	User profile;
 	foodLog food;
+	Recipe recipe;
     FILE *userFile = fopen("user.dat", "r");
 
     if (userFile != NULL) 
@@ -23,6 +24,7 @@ main()
         {
             printf("\n\nMENU\n");
             food = verifyFood();
+            recipe = verifyRecipe();
         }
         else
         {
@@ -40,6 +42,7 @@ main()
         {
             printf("\n\nMENU\n");
             food = verifyFood();
+            recipe = verifyRecipe();
         }
         else
         {

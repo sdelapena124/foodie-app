@@ -2,6 +2,9 @@
 #include <string.h>
 #include <windows.h>
 
+#define MAX_INGREDIENTS 20
+#define MAX_INSTRUCTIONS 20
+
 /* FOOD LOG STRUCT */
 typedef struct 
 {
@@ -21,8 +24,9 @@ typedef struct
     int prepTime;
     int cookTime;
     int numIng;
-    int numSteps;
-    char steps[101];
+    char ingredients[MAX_INGREDIENTS][81];
+    int numInstructions;
+    char instructions[MAX_INSTRUCTIONS][101];
 } Recipe;
 
 /* USER STRUCT */
@@ -268,61 +272,64 @@ int isValidDate (char *str)
 	
 }
 
-//Function for taking input for food
-foodLog verifyFood ()
+//Function for taking input for recipe
+Recipe verifyRecipe ()
 {
-	foodLog f;
+	Recipe r;
     int success = 0;
     
-    //Food Name
+    //Recipe Name
 	while (success == 0)
     {
-        printf("Enter Food Name: ");
-        scanf(" %[^\n]s", f.name);
+        printf("Enter Recipe Name: ");
+        scanf(" %[^\n]s", r.name);
 
-        if (isAlphanumeric(f.name) == 1 && withinBounds(f.name, 3, 50))
+        if (isAlphanumeric(r.name) == 1 && withinBounds(r.name, 3, 50))
         {
             success = 1;
         }
         else
         {
-            printf("Food name must only contain between 3 - 50 alphanumeric characters!\n");
+            printf("Recipe name must only contain between 3 - 50 alphanumeric characters!\n");
         }
     }
 
     success = 0;
     
-    //Food Type
-    while (success == 0)
-    {
-        printf("Enter Food Type (a - appetizer, m - main course, d - dessert): ");
-        scanf(" %c", &f.type);
-
-        if (f.type == 'a' || f.type == 'm' || f.type == 'd')
-        {
-            success = 1;
-        }
-        else
-        {
-            printf("Food name must be between a (appetizer), m(main course), or d (dessert)!\n");
-        }
-    }
-	
-	success = 0;
-	
-	//Number of Times Eaten
+    //Recipe Description
 	while (success == 0)
 	{
-		printf("Number of times eaten: ");
-        scanf(" %d", &f.timesEaten);
+		printf("Recipe Description (overall impression): ");
+        scanf(" %[^\n]s", r.desc);	
         
-        if (f.timesEaten > 0)
+        int descLength = strlen(r.desc);
+		
+		if (descLength > 0 && descLength <= 160)
+		{
+			success = 1;
+		}
+		else
+		{
+			printf("Invalid description! Maximum number of characters is 160.\n");
+		}
+		int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+	}
+	
+	success = 0;
+	//Time to Prepare
+	while (success == 0)
+	{
+		printf("Time to prepare (in minutes): ");
+        scanf(" %d", &r.prepTime);
+        
+        if (r.prepTime > 0)
         {
         	success = 1;
 		}
 		else
 		{
-			printf("Number of times eaten must be a positive integer!\n");
+			printf("Minutes to prepare must be a positive integer!\n");
 		}
 		
 		//smegma clear buffer
@@ -332,74 +339,109 @@ foodLog verifyFood ()
 	}
 	
 	success = 0;
-	
-	//Date First Tried
+	//Time to Cook
 	while (success == 0)
 	{
-		printf("Date First Tried (mm/dd/yyyy): ");
-        scanf("%10s", f.ftDate);
+		printf("Time to cook (in minutes): ");
+        scanf(" %d", &r.cookTime);
         
-        if (isValidDate(f.ftDate) == 0)
+        if (r.cookTime > 0)
         {
-        	printf("Date must be in mm/dd/yyyy format and must only contain digits.\n");
-		}
-		else if (isValidDate(f.ftDate) == 3)
-		{
-			printf("Invalid date! Please try again.\n");
-		}
-		else if (isValidDate(f.ftDate) == 1)
-		{
-			success = 1;
-		}
-		int c;
-        while ((c = getchar()) != '\n' && c != EOF);
-	}
-	
-	success = 0;
-	
-	//Location First Tried
-	while (success == 0)
-	{
-		printf("Location First Tried: ");
-        scanf(" %[^\n]s", f.ftPlace);	
-		
-		int placeLength = strlen(f.ftPlace);
-		
-		if (placeLength > 0 && placeLength <= 30)
-		{
-			success = 1;
+        	success = 1;
 		}
 		else
 		{
-			printf("Invalid location! Maximum number of characters is 30.\n");
+			printf("Minutes to cook must be a positive integer!\n");
 		}
-		int c;
+		
+		//smegma clear buffer
+        int c;
         while ((c = getchar()) != '\n' && c != EOF);
+        //smegma clear buffer
 	}
 	
 	success = 0;
-	
-	//Description
+	//Num of Ingredients
 	while (success == 0)
 	{
-		printf("Description (overall impression of food): ");
-        scanf(" %[^\n]s", f.desc);	
+		printf("Number of ingredients needed: ");
+        scanf(" %d", &r.numIng);
         
-        int descLength = strlen(f.desc);
-		
-		if (descLength > 0 && descLength <= 300)
-		{
-			success = 1;
+        if (r.numIng > 0 && r.numIng < MAX_INGREDIENTS)
+        {
+        	success = 1;
 		}
 		else
 		{
-			printf("Invalid description! Maximum number of characters is 300.\n");
+			printf("Number of ingredients must be a positive integer!\n");
 		}
-		int c;
+		
+		//smegma clear buffer
+        int c;
         while ((c = getchar()) != '\n' && c != EOF);
+        //smegma clear buffer
 	}
-}
+	
+	success = 0;
+	//List of Ingredients
+	while (success == 0)
+	{
+		int i;
+		
+		for (i = 0; i < r.numIng; i++)
+		{
+			printf("Ingredient #%d (max 80 characters): ", i + 1);
+	        scanf(" %[^\n]s", r.ingredients[i]);
+			success = 1;			
+		}	
+		//smegma clear buffer
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+        //smegma clear buffer
+	}
+	
+	success = 0;
+	//Num of Instructions
+	while (success == 0)
+	{
+		printf("Number of instructions needed: ");
+        scanf(" %d", &r.numInstructions);
+        
+        if (r.numInstructions > 0 && r.numInstructions < MAX_INSTRUCTIONS)
+        {
+        	success = 1;
+		}
+		else
+		{
+			printf("Number of instructions must be a positive integer!\n");
+		}
+		
+		//smegma clear buffer
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+        //smegma clear buffer
+	}
+	
+	success = 0;
+	//List of Instructions
+	while (success == 0)
+	{
+		int i;
+		
+		for (i = 0; i < r.numInstructions; i++)
+		{
+			printf("Instruction #%d (max 20 characters): ", i + 1);
+	        scanf(" %[^\n]s", r.instructions[i]);
+			success = 1;			
+		}	
+		//smegma clear buffer
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+        //smegma clear buffer
+	}
 
+
+}
 /* func for taking input and storing user info in the struct*/
 // ADD UI 
 User
@@ -626,5 +668,136 @@ verifyUser(User p)
     return success;
 }
 
+//Function for taking input for food
+foodLog verifyFood ()
+{
+	foodLog f;
+    int success = 0;
+    
+    //Food Name
+	while (success == 0)
+    {
+        printf("Enter Food Name: ");
+        scanf(" %[^\n]s", f.name);
+
+        if (isAlphanumeric(f.name) == 1 && withinBounds(f.name, 3, 50))
+        {
+            success = 1;
+        }
+        else
+        {
+            printf("Food name must only contain between 3 - 50 alphanumeric characters!\n");
+        }
+    }
+
+    success = 0;
+    
+    //Food Type
+    while (success == 0)
+    {
+        printf("Enter Food Type (a - appetizer, m - main course, d - dessert): ");
+        scanf(" %c", &f.type);
+
+        if (f.type == 'a' || f.type == 'm' || f.type == 'd')
+        {
+            success = 1;
+        }
+        else
+        {
+            printf("Food name must be between a (appetizer), m(main course), or d (dessert)!\n");
+        }
+    }
+	
+	success = 0;
+	
+	//Number of Times Eaten
+	while (success == 0)
+	{
+		printf("Number of times eaten: ");
+        scanf(" %d", &f.timesEaten);
+        
+        if (f.timesEaten > 0)
+        {
+        	success = 1;
+		}
+		else
+		{
+			printf("Number of times eaten must be a positive integer!\n");
+		}
+		
+		//smegma clear buffer
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+        //smegma clear buffer
+	}
+	
+	success = 0;
+	
+	//Date First Tried
+	while (success == 0)
+	{
+		printf("Date First Tried (mm/dd/yyyy): ");
+        scanf("%10s", f.ftDate);
+        
+        if (isValidDate(f.ftDate) == 0)
+        {
+        	printf("Date must be in mm/dd/yyyy format and must only contain digits.\n");
+		}
+		else if (isValidDate(f.ftDate) == 3)
+		{
+			printf("Invalid date! Please try again.\n");
+		}
+		else if (isValidDate(f.ftDate) == 1)
+		{
+			success = 1;
+		}
+		int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+	}
+	
+	success = 0;
+	
+	//Location First Tried
+	while (success == 0)
+	{
+		printf("Location First Tried: ");
+        scanf(" %[^\n]s", f.ftPlace);	
+		
+		int placeLength = strlen(f.ftPlace);
+		
+		if (placeLength > 0 && placeLength <= 30)
+		{
+			success = 1;
+		}
+		else
+		{
+			printf("Invalid location! Maximum number of characters is 30.\n");
+		}
+		int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+	}
+	
+	success = 0;
+	
+	//Description
+	while (success == 0)
+	{
+		printf("Description (overall impression of food): ");
+        scanf(" %[^\n]s", f.desc);	
+        
+        int descLength = strlen(f.desc);
+		
+		if (descLength > 0 && descLength <= 300)
+		{
+			success = 1;
+		}
+		else
+		{
+			printf("Invalid description! Maximum number of characters is 300.\n");
+		}
+		int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+	}
+}
 
 
