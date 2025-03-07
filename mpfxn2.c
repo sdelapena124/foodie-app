@@ -1453,6 +1453,134 @@ void displayUser(User *profile)
     fclose(file);
 }
 
+int compareDates(const char *date1, const char *date2) 
+{
+    int year1, month1, day1, year2, month2, day2;
+
+    sscanf(date1, "%d/%d/%d", &month1, &day1, &year1);
+    sscanf(date2, "%d/%d/%d", &month2, &day2, &year2);
+    
+    printf("Comparing: %s and %s\n", date1, date2);
+    printf("Date 1: %d/%d/%d, Date 2: %d/%d/%d\n", month1, day1, year1, month2, day2, year2);
+
+    if (year1 != year2) {
+        return year1 - year2;
+    }
+    if (month1 != month2) {
+        return month1 - month2;
+    }
+    return day1 - day2;
+}
+
+void displayAllFoodLogs() 
+{
+    FILE *foodFile = fopen("foodlogs.txt", "r");
+    
+    if (foodFile == NULL) 
+	{
+        printf("Error opening food logs file.\n");
+        return;
+    }
+
+    foodLog logs[50];
+    int logCount = 0;
+
+    while (fscanf(foodFile, "%50[^\n]\n%c\n%d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
+                  logs[logCount].name, &logs[logCount].type, &logs[logCount].timesEaten,
+                  logs[logCount].ftDate, logs[logCount].ftPlace, logs[logCount].desc) == 6) {
+        logCount++;
+    }
+
+    fclose(foodFile);
+
+    if (logCount > 0) 
+	{
+        for (int i = 0; i < logCount - 1; i++) 
+		{
+            for (int j = 0; j < logCount - i - 1; j++) 
+			{
+                if (compareDates(logs[j].ftDate, logs[j + 1].ftDate) < 0)
+				{
+                    foodLog temp = logs[j];
+                    logs[j] = logs[j + 1];
+                    logs[j + 1] = temp;
+                }
+            }
+        }
+
+        printf("\nALL FOOD LOGS (Descending Order):\n");
+        for (int i = 0; i < logCount; i++) 
+		{
+			printf("Food Log #%d\n", i+1);
+            displayFoodLog(&logs[i]);
+            printf("\n");
+        }
+    } else {
+        printf("No food logs found.\n");
+    }
+    system("pause");
+}
+
+
+void displayAllRecipes() 
+{
+    FILE *recipeFile = fopen("recipes.txt", "r");
+    
+    if (recipeFile == NULL) 
+	{
+        printf("Error opening recipes file.\n");
+        return;
+    }
+
+    Recipe recipes[20];
+    int logCount = 0;
+
+    while (fscanf(recipeFile, "%50[^\n]\n%160[^\n]\n%d\n%d\n%d\n",
+                  recipes[logCount].name, recipes[logCount].desc, &recipes[logCount].prepTime, &recipes[logCount].cookTime, &recipes[logCount].numIng) == 5) 
+	{
+        for (int i = 0; i < recipes[logCount].numIng; i++) 
+		{
+            fscanf(recipeFile, "%80[^\n]\n", recipes[logCount].ingredients[i]);
+        }
+        
+        fscanf(recipeFile, "%d\n", &recipes[logCount].numInstructions);
+        
+        for (int i = 0; i < recipes[logCount].numInstructions; i++) 
+		{
+            fscanf(recipeFile, "%100[^\n]\n", recipes[logCount].instructions[i]);
+        }
+        logCount++;
+    }
+
+    fclose(recipeFile);
+
+    if (logCount > 0) 
+	{
+        for (int i = 0; i < logCount - 1; i++) 
+		{
+            for (int j = 0; j < logCount - i - 1; j++) 
+			{
+                if (strcmp(recipes[j].name, recipes[j + 1].name) > 0)
+				{
+                    Recipe temp = recipes[j];
+                    recipes[j] = recipes[j + 1];
+                    recipes[j + 1] = temp;
+                }
+            }
+        }
+
+        printf("\nALL RECIPES (Ascending Order):\n");
+        for (int i = 0; i < logCount; i++) 
+		{
+			printf("Recipe #%d\n", i+1);
+            displayRecipe(&recipes[i]);
+            printf("\n");
+        }
+    } else {
+        printf("No food logs found.\n");
+    }
+    system("pause");
+}
 
 int findUser(const char *username, User *foundUser) 
 {
@@ -1561,6 +1689,102 @@ void displayAllByUsername(User *profile)
         system("pause");
     }
     clearInputBuffer();
+}
+
+void searchFoodLog() 
+{
+    FILE *foodFile = fopen("foodlogs.txt", "r");
+    
+    displayDivider();
+    if (foodFile == NULL) 
+	{
+        printf("Error opening food logs file.\n");
+        printf("Press any key to continue and go back to main menu...\n");
+    	getchar();
+    	getchar();
+        return;
+    }
+
+    char searchName[51];
+    printf("Enter the food name to search: ");
+    scanf(" %50[^\n]", searchName);
+
+    foodLog log;
+    int found = 0;
+
+    while (fscanf(foodFile, "%50[^\n]\n%c\n%d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
+            log.name, &log.type, &log.timesEaten, log.ftDate, log.ftPlace, log.desc) == 6) 
+	{
+        if (strcmp(log.name, searchName) == 0) 
+		{
+            displayFoodLog(&log);
+            found = 1;
+        }
+    }
+
+    fclose(foodFile);
+
+    if (!found) {
+        printf("No such food has been logged.\n");
+    }
+
+    printf("Press any key to continue and go back to main menu...\n");
+    getchar();
+    getchar();
+}
+
+void searchRecipe() 
+{
+    FILE *recipeFile = fopen("recipes.txt", "r");
+    
+    displayDivider();
+    if (recipeFile == NULL) 
+	{
+        printf("Error opening recipes file.\n");
+        printf("Press any key to continue and go back to main menu...\n");
+    	getchar();
+    	getchar();
+        return;
+    }
+
+    char searchName[51];
+    printf("Enter the recipe name to search: ");
+    scanf(" %50[^\n]", searchName);
+
+    Recipe recipe;
+    int found = 0;
+
+    while (fscanf(recipeFile, "%50[^\n]\n%160[^\n]\n%d\n%d\n%d\n",
+                recipe.name, recipe.desc, &recipe.prepTime, &recipe.cookTime, &recipe.numIng) == 5) 
+	{
+		for (int i = 0; i < recipe.numIng; i++) 
+		{
+            fscanf(recipeFile, "%80[^\n]\n", recipe.ingredients[i]);
+        }
+
+        fscanf(recipeFile, "%d\n", &recipe.numInstructions);
+
+        for (int i = 0; i < recipe.numInstructions; i++) 
+		{
+            fscanf(recipeFile, "%100[^\n]\n", recipe.instructions[i]);
+        }
+        
+        if (strcmp(recipe.name, searchName) == 0) 
+		{
+			displayRecipe(&recipe);
+            found = 1;
+        }    
+    }
+
+    fclose(recipeFile);
+
+    if (!found) {
+        printf("No such recipe has been logged.\n");
+    }
+
+    printf("Press any key to continue and go back to main menu...\n");
+    getchar();
+    getchar();
 }
 
 void showLoadingBar() 

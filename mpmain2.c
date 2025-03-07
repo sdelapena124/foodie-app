@@ -56,16 +56,16 @@ main()
                         displayAllByUsername(&profile);
                         break;
                     case 9:
-                        
+                        displayAllFoodLogs();
                         break;
                     case 10:
-                        
+                        displayAllRecipes();
                         break;
 		            case 11:
-		                
+		                searchFoodLog();
 		                break;
 		            case 12:
-		                
+		                searchRecipe();
 		                break;
 		            case 13:
 		                
@@ -74,7 +74,7 @@ main()
 		                
 		                break;
 		            case 15:
-		                
+		            	
 		                printf("Exiting program...\n");
 		                break;
 		            default:
@@ -130,16 +130,16 @@ main()
                         displayAllByUsername(&profile);
                         break;
 		            case 9:
-		                
+		                displayAllRecipes();
 		                break;
 		            case 10:
-		                
+		                displayAllRecipes();
 		                break;
 		            case 11:
-		                
+		                searchFoodLog();
 		                break;
 		            case 12:
-		                
+		                searchRecipe();
 		                break;
 		            case 13:
 		                
