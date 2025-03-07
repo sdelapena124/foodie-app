@@ -4,6 +4,7 @@
 
 #define MAX_INGREDIENTS 20
 #define MAX_INSTRUCTIONS 20
+#define MAX_USERNAME_LENGTH 51
 
 /* FOOD LOG STRUCT */
 typedef struct 
@@ -491,7 +492,7 @@ verifyUser(User *p)
         }
         else if (strcmp(p->pass, verifyPass) == 0 && strcmp(p->username, verifyUser) == 0)
         {
-            printf("\n\nWelcome!\n");
+            printf("\n\nWELCOME %s!\n", p->username);
             success = 1;
         }
     }
@@ -1452,70 +1453,122 @@ void displayUser(User *profile)
     fclose(file);
 }
 
+
+int findUser(const char *username, User *foundUser) 
+{
+    FILE *userFile = fopen("user.dat", "r");
+    if (userFile == NULL) 
+	{
+        return 0;
+    }
+
+    User tempUser;
+    while (fscanf(userFile, "%50[^\n]\n%50[^\n]\n%100[^\n]\n%100[^\n]\n%20[^\n]\n",
+                  tempUser.username, tempUser.pass, tempUser.name, tempUser.email, tempUser.number) == 5) 
+	{
+		if (strcmp(tempUser.username, username) == 0) 
+		{
+            *foundUser = tempUser;
+            fclose(userFile);
+            return 1;
+        }
+    }
+
+    fclose(userFile);
+    return 0;
+}
+
+
 void displayAllByUsername(User *profile) 
 {
-    FILE *foodFile = fopen("foodlogs.txt", "r");
-    FILE *recipeFile = fopen("recipes.txt", "r");
-    int found = 0;
-    
+    char username[MAX_USERNAME_LENGTH];
+    User user;
 
-    if (foodFile != NULL) 
-	{
-		displayDivider();
-        printf("\nFood Logs for %s:\n", profile->username);
-        foodLog log;
-        
-        while (fscanf(foodFile, "%50[^\n]\n%c\n%d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
-                      log.name, &log.type, &log.timesEaten, log.ftDate, log.ftPlace, log.desc) == 6) 
-		{
-            if (strcmp(profile->username, "admin") == 0 || foodNameExists(log.name)) 
-			{ 
-                printf("%s, Type: %c, Times: %d, Date: %s, Place: %s\n",
-                       log.name, log.type, log.timesEaten, log.ftDate, log.ftPlace);
-                found = 1;
-            }
-        }
-        
-        fclose(foodFile);
-    }
-
-    if (recipeFile != NULL) 
-	{
-        printf("\nRecipes for %s:\n", profile->username);
-        Recipe recipe;
-        
-        int i;
-        while (fscanf(recipeFile, "%50[^\n]\n%160[^\n]\n%d\n%d\n%d\n",
-                      recipe.name, recipe.desc, &recipe.prepTime, &recipe.cookTime, &recipe.numIng) == 5) 
-		{
-            for (i = 0; i < recipe.numIng; i++) 
-			{
-                fscanf(recipeFile, "%80[^\n]\n", recipe.ingredients[i]);
-            }
-            
-            fscanf(recipeFile, "%d\n", &recipe.numInstructions);
-            
-            for (i = 0; i < recipe.numInstructions; i++) 
-			{
-                fscanf(recipeFile, "%100[^\n]\n", recipe.instructions[i]);
-            }
-            
-            if (strcmp(profile->username, "admin") == 0 || recipeNameExists(recipe.name)) 
-			{
-                printf("%s, Prep: %d min, Cook: %d min\n",
-                       recipe.name, recipe.prepTime, recipe.cookTime);
-                found = 1;
-            }
-        }
-        
-        fclose(recipeFile);
-    }
-
-    if (!found) 
-	{
-		printf("No entries found for %s.\n", profile->username);	
-	}
-    
-    system("pause");
+    printf("Enter username to search: ");
+    scanf("%50s", username);
     clearInputBuffer();
+
+    if (findUser(username, &user)) 
+	{
+        if (profile != NULL && strcmp(profile->username, username) == 0) 
+		{
+            displayUser(&user);
+        } 
+		else 
+		{
+            printf("Full Name: %s\n", user.name);
+            printf("Username: %s\n", user.username);
+        }
+
+        FILE *foodFile = fopen("foodlogs.txt", "r");
+        FILE *recipeFile = fopen("recipes.txt", "r");
+        int found = 0;
+
+        if (foodFile != NULL) 
+		{
+            printf("\nFOOD LOGS FOR %s\n", user.username);
+            foodLog log;
+            char fileUsername[MAX_USERNAME_LENGTH];
+
+            while (fscanf(foodFile, "%50[^\n]\n%c\n%d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
+                    log.name, &log.type, &log.timesEaten, log.ftDate, log.ftPlace, log.desc) == 6) 
+			{
+                    displayFoodLog(&log);
+                    found = 1;
+            }
+            fclose(foodFile);
+        }
+
+        if (recipeFile != NULL) 
+		{
+            printf("\nRECIPES FOR %s\n", user.username);
+            Recipe recipe;
+            char recipeUsername[MAX_USERNAME_LENGTH];
+            int i;
+
+            while (fscanf(recipeFile, "%50[^\n]\n%160[^\n]\n%d\n%d\n%d\n",
+                recipe.name, recipe.desc, &recipe.prepTime, &recipe.cookTime, &recipe.numIng) == 5) 
+			{
+
+                for (i = 0; i < recipe.numIng; i++) 
+				{
+                    fscanf(recipeFile, "%80[^\n]\n", recipe.ingredients[i]);
+                }
+
+                fscanf(recipeFile, "%d\n", &recipe.numInstructions);
+
+                for (i = 0; i < recipe.numInstructions; i++) 
+				{
+                    fscanf(recipeFile, "%100[^\n]\n", recipe.instructions[i]);
+                }
+
+                    displayRecipe(&recipe);
+                    found = 1;
+            }
+            fclose(recipeFile);
+        }
+
+        if (!found) 
+		{
+            printf("No entries found for %s.\n", user.username);
+        }
+
+        system("pause");
+    } 
+	else 
+	{
+        printf("User '%s' not found.\n", username);
+        system("pause");
+    }
+    clearInputBuffer();
+}
+
+void showLoadingBar() 
+{
+    printf("\nLogging in . . .");
+    for (int i = 0; i <= 100; i += 25) {
+        printf("\rLogging in . . . [%3d%%] ", i);
+        usleep(350000);
+    }
+    printf("\n");
 }

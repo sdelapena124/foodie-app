@@ -22,6 +22,7 @@ main()
         
         if (loginSuccessful)
         {
+        	showLoadingBar();
         	do 
 			{
 		        // Display menu
@@ -95,6 +96,7 @@ main()
 
         if (loginSuccessful)
         {
+        	showLoadingBar();
         	do 
 			{
 		        // Display menu
