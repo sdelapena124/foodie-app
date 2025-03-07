@@ -42,7 +42,7 @@ typedef struct
 //Divider
 void displayDivider ()
 {
-	printf("\n\n====================================\n\n\n");
+	printf("\n\n====================================\n");
 }
 
 /* func to check if string is alphanumeric*/
@@ -550,6 +550,7 @@ int verifyFood(foodLog *f)
 	{
 		printf("Number of times eaten: ");
         scanf(" %d", &f->timesEaten);
+        clearInputBuffer();
         
         if (f->timesEaten > 0)
         {
@@ -559,9 +560,6 @@ int verifyFood(foodLog *f)
 		{
 			printf("Number of times eaten must be a positive integer!\n");
 		}
-		
-	clearInputBuffer();
-		
 	}
 	
 	success = 0;
@@ -644,7 +642,7 @@ int foodNameExists(const char *foodName)
     }
 
     foodLog tempLog;
-    while (fscanf(file, "%50s %c %d %10s %30s %300[^\n]\n",
+    while (fscanf(file, " %50s\n%c\n%d\n%10s\n%30s\n%300[^\n]\n",
                   tempLog.name, &tempLog.type, &tempLog.timesEaten,
                   tempLog.ftDate, tempLog.ftPlace, tempLog.desc) == 6)
     {
@@ -669,6 +667,7 @@ void addFoodLog()
         if (foodNameExists(newLog.name))
         {
             printf("Food name '%s' already exists. Please enter a unique food name.\n", newLog.name);
+            system("pause");
             return;
         }
 
@@ -676,6 +675,7 @@ void addFoodLog()
         if (file == NULL)
         {
             printf("Error opening food logs file.\n");
+            system("pause");
             return;
         }
 
@@ -685,10 +685,12 @@ void addFoodLog()
 
         fclose(file);
         printf("Food log added successfully!\n");
+        system("pause");
     }
     else
     {
-        printf("Food Log creation failed. Please try again.\n");
+        printf("Food Log creation failed. Going back to main menu!\n");
+        system("pause");
     }
 
 }
@@ -743,6 +745,7 @@ int verifyRecipe(Recipe *r)
 	{
 		printf("Time to prepare (in minutes): ");
         scanf(" %d", &r->prepTime);
+        clearInputBuffer();
         
         if (r->prepTime > 0)
         {
@@ -752,11 +755,7 @@ int verifyRecipe(Recipe *r)
 		{
 			printf("Minutes to prepare must be a positive integer!\n");
 		}
-		
-		//smegma clear buffer
-        int c;
-        while ((c = getchar()) != '\n' && c != EOF);
-        //smegma clear buffer
+
 	}
 	
 	success = 0;
@@ -765,6 +764,7 @@ int verifyRecipe(Recipe *r)
 	{
 		printf("Time to cook (in minutes): ");
         scanf(" %d", &r->cookTime);
+        clearInputBuffer();
         
         if (r->cookTime > 0)
         {
@@ -774,8 +774,6 @@ int verifyRecipe(Recipe *r)
 		{
 			printf("Minutes to cook must be a positive integer!\n");
 		}
-		
-		void clearInputBuffer();
 	}
 	
 	success = 0;
@@ -784,6 +782,7 @@ int verifyRecipe(Recipe *r)
 	{
 		printf("Number of ingredients needed: ");
         scanf(" %d", &r->numIng);
+        clearInputBuffer();
         
         if (r->numIng > 0 && r->numIng < MAX_INGREDIENTS)
         {
@@ -793,8 +792,6 @@ int verifyRecipe(Recipe *r)
 		{
 			printf("Number of ingredients must be a positive integer!\n");
 		}
-		
-		void clearInputBuffer();
 	}
 	
 	success = 0;
@@ -818,6 +815,7 @@ int verifyRecipe(Recipe *r)
 	{
 		printf("Number of instructions needed: ");
         scanf(" %d", &r->numInstructions);
+        clearInputBuffer();
         
         if (r->numInstructions > 0 && r->numInstructions < MAX_INSTRUCTIONS)
         {
@@ -827,8 +825,6 @@ int verifyRecipe(Recipe *r)
 		{
 			printf("Number of instructions must be a positive integer!\n");
 		}
-		
-		void clearInputBuffer();
 	}
 	
 	success = 0;
@@ -860,19 +856,19 @@ int recipeNameExists(const char *recipeName)
     }
 
     Recipe tempRecipe;
-    while (fscanf(file, "%50s %160[^\n] %d %d %d",
+    while (fscanf(file, " %50s\n%160[^\n]\n%d\n%d\n%d\n",
                   tempRecipe.name, tempRecipe.desc, &tempRecipe.prepTime,
                   &tempRecipe.cookTime, &tempRecipe.numIng) == 5) 
 	{
         for (i = 0; i < tempRecipe.numIng; i++) 
 		{
-            fscanf(file, " %80[^\n]", tempRecipe.ingredients[i]);
+            fscanf(file, " %80[^\n]\n", tempRecipe.ingredients[i]);
         }
-        fscanf(file, "%d", &tempRecipe.numInstructions);
+        fscanf(file, "%d\n", &tempRecipe.numInstructions);
         
         for(i = 0; i < tempRecipe.numInstructions; i++) 
 		{
-            fscanf(file, " %100[^\n]", tempRecipe.instructions[i]);
+            fscanf(file, " %100[^\n]\n", tempRecipe.instructions[i]);
         }
 
         if (strcmp(tempRecipe.name, recipeName) == 0) 
@@ -897,6 +893,7 @@ void addRecipe()
         if (recipeNameExists(newRecipe.name))
         {
             printf("Recipe name '%s' already exists. Please enter a unique food name.\n", newRecipe.name);
+            system("pause");
             return;
         }
 
@@ -925,10 +922,12 @@ void addRecipe()
 
         fclose(file);
         printf("Recipe added successfully!\n");
+        system("pause");
     }
     else
     {
-        printf("Recipe creation failed. Please try again.\n");
+        printf("Recipe creation failed. Going back to main menu!\n");
+        system("pause");
     }
 
 }
@@ -959,6 +958,16 @@ int displayMenu ()
     scanf("%d", &choice);
     
     return choice;
+}
+
+void displayFoodLog(const foodLog *log) 
+{
+    printf("Food Name: %s\n", log->name);
+    printf("Type: %c\n", log->type);
+    printf("Times Eaten: %d\n", log->timesEaten);
+    printf("Date: %s\n", log->ftDate);
+    printf("Place: %s\n", log->ftPlace);
+    printf("Description: %s\n", log->desc);
 }
 
 void modifyFoodLog() 
@@ -993,33 +1002,38 @@ void modifyFoodLog()
     
     clearInputBuffer();
 
-    foodLog log;
-    
+    foodLog log; 
+	foodLog tempLog;
+
     int found = 0;
     while (fscanf(file, "%50[^\n]\n%c\n%d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
-                  log.name, &log.type, &log.timesEaten, log.ftDate, log.ftPlace, log.desc) == 6) 
-	{
-        if (strcmp(log.name, foodName) == 0) 
-		{
+                  log.name, &log.type, &log.timesEaten, log.ftDate, log.ftPlace, log.desc) == 6) {
+        if (strcmp(log.name, foodName) == 0) {
             found = 1;
-            printf("Current: %s, Type: %c, Times Eaten: %d, Date: %s, Place: %s, Desc: %s\n",
-                   log.name, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
-            printf("Enter new times eaten: ");
-            scanf("%d", &log.timesEaten);
+            displayDivider();
+            printf("Current:\n");
+            displayFoodLog(&log);
+
+            tempLog = log;
             
-            clearInputBuffer();
-            
-            printf("Enter new date (mm/dd/yyyy): ");
-            scanf("%10s", log.ftDate);
-            
-            clearInputBuffer();
-            
-            fprintf(temp, "%s\n%c\n%d\n%s\n%s\n%s\n",
-                    log.name, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
-            printf("Food log modified successfully.\n");
-        } 
-		else 
-		{
+            displayDivider();
+            verifyFood(&tempLog);
+
+            char confirm;
+            printf("Confirm changes? (Y/N): ");
+            scanf(" %c", &confirm);
+
+            if (confirm == 'y' || confirm == 'Y') {
+                fprintf(temp, "%s\n%c\n%d\n%s\n%s\n%s\n",
+                        tempLog.name, tempLog.type, tempLog.timesEaten, tempLog.ftDate, tempLog.ftPlace, tempLog.desc);
+                printf("Food log modified successfully.\n");
+            } else {
+                fprintf(temp, "%s\n%c\n%d\n%s\n%s\n%s\n",
+                        log.name, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
+                printf("Modification cancelled.\n");
+            }
+
+        } else {
             fprintf(temp, "%s\n%c\n%d\n%s\n%s\n%s\n",
                     log.name, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
         }
@@ -1028,11 +1042,39 @@ void modifyFoodLog()
     fclose(temp);
     remove("foodlogs.txt");
     rename("temp.txt", "foodlogs.txt");
-    if (!found) printf("Food log not found.\n");
+    
+    if (!found) 
+	{
+		printf("Food log not found.\n");	
+	}
     Sleep(1000);
 }
 
-void modifyRecipe() {
+void displayRecipe(const Recipe *recipe) 
+{
+    printf("Food Name: %s\n", recipe->name);
+    printf("Description: %s\n", recipe->desc);
+    printf("Preparation Time: %d min/s\n", recipe->prepTime);
+    printf("Cooking Time: %d min/s\n", recipe->cookTime);
+    printf("Number of Ingredients: %d\n", recipe->numIng);
+    printf("List of Ingredients:\n");
+    
+    for (int i = 0; i < recipe->numIng; i++) 
+	{
+        printf("- %s\n", recipe->ingredients[i]);
+    }
+    
+    printf("Number of Instructions: %d\n", recipe->numInstructions);
+    printf("Instructions:\n");
+    
+    for (int i = 0; i < recipe->numInstructions; i++) 
+	{
+        printf("%d. %s\n",i+1, recipe->instructions[i]);
+    }
+}
+
+void modifyRecipe() 
+{
     FILE *file = fopen("recipes.txt", "r");
     if (file == NULL) 
 	{
@@ -1063,19 +1105,20 @@ void modifyRecipe() {
     clearInputBuffer();
 
     Recipe recipe;
+    Recipe tempRecipe;
     
     int i, found = 0;
-    
+
     while (fscanf(file, "%50[^\n]\n%160[^\n]\n%d\n%d\n%d\n",
-                  recipe.name, recipe.desc, &recipe.prepTime, &recipe.cookTime, &recipe.numIng) == 5) 
+            recipe.name, recipe.desc, &recipe.prepTime, &recipe.cookTime, &recipe.numIng) == 5) 
 	{
         for (i = 0; i < recipe.numIng; i++) 
 		{
             fscanf(file, "%80[^\n]\n", recipe.ingredients[i]);
         }
-        
+
         fscanf(file, "%d\n", &recipe.numInstructions);
-        
+
         for (i = 0; i < recipe.numInstructions; i++) 
 		{
             fscanf(file, "%100[^\n]\n", recipe.instructions[i]);
@@ -1084,85 +1127,114 @@ void modifyRecipe() {
         if (strcmp(recipe.name, recipeName) == 0) 
 		{
             found = 1;
+            displayDivider();
+            printf("\nCurrent:\n");
+            displayRecipe(&recipe);
+
+            tempRecipe = recipe;
             
-            printf("Current: %s, Prep: %d min, Cook: %d min\n", recipe.name, recipe.prepTime, recipe.cookTime);
-            printf("Enter new prep time (minutes): ");
-            scanf("%d", &recipe.prepTime);
-            
+            displayDivider();
+            verifyRecipe(&tempRecipe);
+
+            char confirm;
+            printf("Confirm changes? (Y/N): ");
+            scanf(" %c", &confirm);
             clearInputBuffer();
-            
-            printf("Enter new cook time (minutes): ");
-            scanf("%d", &recipe.cookTime);
-            
-            clearInputBuffer();
-            
-            fprintf(temp, "%s\n%s\n%d\n%d\n%d\n",
-                    recipe.name, recipe.desc, recipe.prepTime, recipe.cookTime, recipe.numIng);
-                    
-            for (i = 0; i < recipe.numIng; i++) 
+
+            if (confirm == 'y' || confirm == 'Y') 
 			{
-                fprintf(temp, "%s\n", recipe.ingredients[i]);
-            }
-            
-            fprintf(temp, "%d\n", recipe.numInstructions);
-            
-            for (i = 0; i < recipe.numInstructions; i++) 
+                fprintf(temp, "%s\n%s\n%d\n%d\n%d\n",
+                        tempRecipe.name, tempRecipe.desc, tempRecipe.prepTime, tempRecipe.cookTime, tempRecipe.numIng);
+
+                for (i = 0; i < tempRecipe.numIng; i++) 
+				{
+                    fprintf(temp, "%s\n", tempRecipe.ingredients[i]);
+                }
+
+                fprintf(temp, "%d\n", tempRecipe.numInstructions);
+
+                for (i = 0; i < tempRecipe.numInstructions; i++) 
+				{
+                    fprintf(temp, "%s\n", tempRecipe.instructions[i]);
+                }
+
+                printf("Recipe modified successfully.\n");
+            } 
+			else 
 			{
-                fprintf(temp, "%s\n", recipe.instructions[i]);
+                fprintf(temp, "%s\n%s\n%d\n%d\n%d\n",
+                        recipe.name, recipe.desc, recipe.prepTime, recipe.cookTime, recipe.numIng);
+
+                for (i = 0; i < recipe.numIng; i++) 
+				{
+                    fprintf(temp, "%s\n", recipe.ingredients[i]);
+                }
+
+                fprintf(temp, "%d\n", recipe.numInstructions);
+
+                for (i = 0; i < recipe.numInstructions; i++) 
+				{
+                    fprintf(temp, "%s\n", recipe.instructions[i]);
+                }
+                printf("Modification cancelled.\n");
             }
-            
-            printf("Recipe modified successfully.\n");
-        }
+        } 
 		else 
 		{
             fprintf(temp, "%s\n%s\n%d\n%d\n%d\n",
                     recipe.name, recipe.desc, recipe.prepTime, recipe.cookTime, recipe.numIng);
-                    
+
             for (i = 0; i < recipe.numIng; i++) 
 			{
                 fprintf(temp, "%s\n", recipe.ingredients[i]);
             }
-            
+
             fprintf(temp, "%d\n", recipe.numInstructions);
-            
+
             for (i = 0; i < recipe.numInstructions; i++) 
 			{
                 fprintf(temp, "%s\n", recipe.instructions[i]);
             }
         }
     }
-    
+
     fclose(file);
     fclose(temp);
     remove("recipes.txt");
     rename("temp.txt", "recipes.txt");
-    if (!found) printf("Recipe not found.\n");
+    if (!found) 
+	{
+		printf("Recipe not found.\n");	
+	}
     Sleep(1000);
 }
 
-void deleteFoodLog() {
+void deleteFoodLog() 
+{
     FILE *file = fopen("foodlogs.txt", "r");
     
+    displayDivider();
     if (file == NULL) 
 	{
         printf("There are no food logs to delete.\n");
         Sleep(1000);
+        system("pause");
         return;
     }
 
-    // check if file is empty
     fpos_t start;
-    fgetpos(file, &start); // starting pos
-    fscanf(file, "%*c");   // try to read a char
+    fgetpos(file, &start); 
+    fscanf(file, "%*c"); 
     
     if (feof(file)) 
-	{      // if end of file is reached immediately, empty
+	{ 
         printf("There are no food logs to delete.\n");
         fclose(file);
         Sleep(1000);
+        system("pause");
         return;
     }
-    rewind(file); // file pointer restart
+    rewind(file); 
 
     FILE *temp = fopen("temp.txt", "w");
     char foodName[51];
@@ -1173,53 +1245,69 @@ void deleteFoodLog() {
 
     foodLog log;
     int found = 0;
-    
+
     while (fscanf(file, "%50[^\n]\n%c\n%d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
-                  log.name, &log.type, &log.timesEaten, log.ftDate, log.ftPlace, log.desc) == 6) 
+        log.name, &log.type, &log.timesEaten, log.ftDate, log.ftPlace, log.desc) == 6) 
 	{
-        if (strcmp(log.name, foodName) != 0) 
-		{
-            fprintf(temp, "%s\n%c\n%d\n%s\n%s\n%s\n",
-                    log.name, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
-        } 
-		else 
+        if (strcmp(log.name, foodName) == 0) 
 		{
             found = 1;
+            printf("Food Log to Delete:\n\n");
+            displayFoodLog(&log);
+
+            char confirm;
+            printf("Confirm deletion? (Y/N): ");
+            scanf(" %c", &confirm);
+
+            if (confirm == 'y' || confirm == 'Y') 
+			{
+				printf("Food log deletion process completed.\n");
+            } 
+			else
+			{
+                fprintf(temp, "%s\n%c\n%d\n%s\n%s\n%s\n",
+                log.name, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
+                printf("Deletion cancelled. Food log retained.\n");
+            }
+        }
+		else 
+		{
+            fprintf(temp, "%s\n%c\n%d\n%s\n%s\n%s\n",
+            log.name, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
         }
     }
-    
+
     fclose(file);
     fclose(temp);
     remove("foodlogs.txt");
     rename("temp.txt", "foodlogs.txt");
-    
+
     if (found) 
 	{
-        printf("Food log deleted successfully.\n"); // check if file is empty after deleting
-        
+        system("pause");
         FILE *check = fopen("foodlogs.txt", "r");
-        if (check != NULL)
-		{
+        if (check != NULL) {
             fscanf(check, "%*c");
-            
-            if (feof(check)) 
-			{
-                remove("foodlogs.txt"); //byeee empty file
+
+            if (feof(check)) {
+                remove("foodlogs.txt");
             }
-            
+
             fclose(check);
         }
     } 
 	else 
 	{
         printf("Food log not found.\n");
+        system("pause");
     }
-    
+
     Sleep(1000);
 }
 
 void deleteRecipe() 
 {
+	displayDivider();
     FILE *file = fopen("recipes.txt", "r");
     if (file == NULL) 
 	{
@@ -1267,26 +1355,56 @@ void deleteRecipe()
             fscanf(file, "%100[^\n]\n", recipe.instructions[i]);
         }
 
-        if (strcmp(recipe.name, recipeName) != 0) 
+        if (strcmp(recipe.name, recipeName) == 0) 
 		{
-            fprintf(temp, "%s\n%s\n%d\n%d\n%d\n",
-                    recipe.name, recipe.desc, recipe.prepTime, recipe.cookTime, recipe.numIng);
-                    
-            for (i = 0; i < recipe.numIng; i++) 
+            found = 1;
+            printf("Recipe to Delete:\n\n");
+            displayRecipe(&recipe);
+
+            char confirm;
+            printf("Confirm deletion? (Y/N): ");
+            scanf(" %c", &confirm);
+
+            if (confirm == 'y' || confirm == 'Y') 
 			{
-                fprintf(temp, "%s\n", recipe.ingredients[i]);
-            }
-            
-            fprintf(temp, "%d\n", recipe.numInstructions);
-            
-            for (i = 0; i < recipe.numInstructions; i++) 
+ 		       	printf("Recipe deleted successfully.\n");
+            } 
+			else 
 			{
-                fprintf(temp, "%s\n", recipe.instructions[i]);
+                fprintf(temp, "%s\n%s\n%d\n%d\n%d\n",
+                        recipe.name, recipe.desc, recipe.prepTime, recipe.cookTime, recipe.numIng);
+
+                for (i = 0; i < recipe.numIng; i++) 
+				{
+                    fprintf(temp, "%s\n", recipe.ingredients[i]);
+                }
+
+                fprintf(temp, "%d\n", recipe.numInstructions);
+
+                for (i = 0; i < recipe.numInstructions; i++) 
+				{
+                    fprintf(temp, "%s\n", recipe.instructions[i]);
+                }
+                printf("Deletion cancelled. Recipe retained.\n"); 
             }
         } 
 		else 
 		{
-            found = 1;
+
+            fprintf(temp, "%s\n%s\n%d\n%d\n%d\n",
+                    recipe.name, recipe.desc, recipe.prepTime, recipe.cookTime, recipe.numIng);
+
+            for (i = 0; i < recipe.numIng; i++) 
+			{
+                fprintf(temp, "%s\n", recipe.ingredients[i]);
+            }
+
+            fprintf(temp, "%d\n", recipe.numInstructions);
+
+            for (i = 0; i < recipe.numInstructions; i++) 
+			{
+                fprintf(temp, "%s\n", recipe.instructions[i]);
+            }
         }
     }
     
@@ -1297,9 +1415,8 @@ void deleteRecipe()
     
     if (found) 
 	{
-        printf("Recipe deleted successfully.\n");
-
-        FILE *check = fopen("recipes.txt", "r");
+        system("pause");
+		FILE *check = fopen("recipes.txt", "r");
         
         if (check != NULL) 
 		{
@@ -1316,6 +1433,7 @@ void deleteRecipe()
 	else 
 	{
         printf("Recipe not found.\n");
+        system("pause");
     }
     
     Sleep(1000);
@@ -1323,11 +1441,15 @@ void deleteRecipe()
 
 void displayUser(User *profile) 
 {
+	FILE *file = fopen("user.dat", "r");
+	
+	displayDivider();
     printf("Username: %s\nName: %s\nEmail: %s\nNumber: %s\n",
            profile->username, profile->name, profile->email, profile->number);
-    printf("Press Enter to continue...\n");
-    
+    system("pause");
+
     clearInputBuffer();
+    fclose(file);
 }
 
 void displayAllByUsername(User *profile) 
@@ -1335,9 +1457,11 @@ void displayAllByUsername(User *profile)
     FILE *foodFile = fopen("foodlogs.txt", "r");
     FILE *recipeFile = fopen("recipes.txt", "r");
     int found = 0;
+    
 
     if (foodFile != NULL) 
 	{
+		displayDivider();
         printf("\nFood Logs for %s:\n", profile->username);
         foodLog log;
         
@@ -1387,7 +1511,11 @@ void displayAllByUsername(User *profile)
         fclose(recipeFile);
     }
 
-    if (!found) printf("No entries found for %s.\n", profile->username);
-    printf("Press Enter to continue...\n");
+    if (!found) 
+	{
+		printf("No entries found for %s.\n", profile->username);	
+	}
+    
+    system("pause");
     clearInputBuffer();
 }
