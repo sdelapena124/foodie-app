@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "mpfxn.c"
+#include "mpfxn2.c"
 
 int
 main()
@@ -25,25 +25,7 @@ main()
         	do 
 			{
 		        // Display menu
-		        system("cls");
-		        printf("\nFoodie App Menu\n");
-		        printf("[1] Add Food Log\n");
-		        printf("[2] Add Recipe\n");
-		        printf("[3] Modify Food Log\n");
-		        printf("[4] Modify Recipe\n");
-		        printf("[5] Delete Food Log\n");
-		        printf("[6] Delete Recipe\n");
-		        printf("[7] Display User\n");
-		        printf("[8] Display All Food Log and Recipe by Username\n");
-		        printf("[9] Display All Food Log\n");
-		        printf("[10] Display All Recipe\n");
-		        printf("[11] Search Food Log\n");
-		        printf("[12] Search Recipe\n");
-		        printf("[13] Export Data\n");
-		        printf("[14] Import Data\n");
-		        printf("[15] Exit\n");
-		        printf("Enter your choice: ");
-		        scanf("%d", &choice);
+		        choice = displayMenu();
 
 		        // Process user choice
 		        switch (choice) 
@@ -55,29 +37,29 @@ main()
 		                addRecipe();
 		                break;
 		            case 3:
-		                
+		            	modifyFoodLog();
 		                break;
 		            case 4:
-		                
-		                break;
-		            case 5:
-		                
-		                break;
-		            case 6:
-		                
-		                break;
-		            case 7:
-		                
-		                break;
-		            case 8:
-		                
-		                break;
-		            case 9:
-		                
-		                break;
-		            case 10:
-		                
-		                break;
+                        modifyRecipe();
+                        break;
+                    case 5:
+                        deleteFoodLog();
+                        break;
+                    case 6:
+                        deleteRecipe();
+                        break;
+                    case 7:
+                        displayUser(&profile);
+                        break;
+                    case 8:
+                        displayAllByUsername(&profile);
+                        break;
+                    case 9:
+                        
+                        break;
+                    case 10:
+                        
+                        break;
 		            case 11:
 		                
 		                break;
@@ -116,25 +98,7 @@ main()
         	do 
 			{
 		        // Display menu
-		        system("cls");
-		        printf("\nFoodie App Menu\n");
-		        printf("[1] Add Food Log\n");
-		        printf("[2] Add Recipe\n");
-		        printf("[3] Modify Food Log\n");
-		        printf("[4] Modify Recipe\n");
-		        printf("[5] Delete Food Log\n");
-		        printf("[6] Delete Recipe\n");
-		        printf("[7] Display User\n");
-		        printf("[8] Display All Food Log and Recipe by Username\n");
-		        printf("[9] Display All Food Log\n");
-		        printf("[10] Display All Recipe\n");
-		        printf("[11] Search Food Log\n");
-		        printf("[12] Search Recipe\n");
-		        printf("[13] Export Data\n");
-		        printf("[14] Import Data\n");
-		        printf("[15] Exit\n");
-		        printf("Enter your choice: ");
-		        scanf("%d", &choice);
+		        choice = displayMenu();
 
 		        // Process user choice
 		        switch (choice) 
@@ -146,23 +110,23 @@ main()
 		                addRecipe();
 		                break;
 		            case 3:
-		                
+		            	modifyFoodLog();
 		                break;
 		            case 4:
-		                
-		                break;
-		            case 5:
-		                
-		                break;
-		            case 6:
-		                
-		                break;
-		            case 7:
-		                
-		                break;
-		            case 8:
-		                
-		                break;
+                        modifyRecipe();
+                        break;
+                    case 5:
+                        deleteFoodLog();
+                        break;
+                    case 6:
+                        deleteRecipe();
+                        break;
+                    case 7:
+                        displayUser(&profile);
+                        break;
+                    case 8:
+                        displayAllByUsername(&profile);
+                        break;
 		            case 9:
 		                
 		                break;

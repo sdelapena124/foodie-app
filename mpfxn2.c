@@ -1391,4 +1391,3 @@ void displayAllByUsername(User *profile)
     printf("Press Enter to continue...\n");
     clearInputBuffer();
 }
-
