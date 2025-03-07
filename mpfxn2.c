@@ -560,10 +560,8 @@ int verifyFood(foodLog *f)
 			printf("Number of times eaten must be a positive integer!\n");
 		}
 		
-		//smegma clear buffer
-        int c;
-        while ((c = getchar()) != '\n' && c != EOF);
-        //smegma clear buffer
+	clearInputBuffer();
+		
 	}
 	
 	success = 0;
