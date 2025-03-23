@@ -3,7 +3,7 @@
 Your program should also allow the user to Manage Data, by providing a user-friendly interface, as well as the functionality to do the following:
 
 1. Enter User Profile
-    The first run of the program will get user credentials from the username up to the mobile number. The password will be inputted twice on creating the user credentials, one for the intended password and another for confirmation. Succeeding runs of the program will ask for the provided username and password after successful user registration. If the provided user credentials are correct, show the program menu (referring to the set of bulleted features from Add Food Log to Exit). If not, make the user try again and display how many unsuccessful logins have been made so far. Upon reaching 3 unsuccessfully login attempts, show a message for the user to log in again after some time and terminate the program after letting the user press any key to confirm the message received.
+    The first run of the program will get user credentials from the username up to the mobile number. The password will be inputted twice on creating the user credentials, one for the intended  		password and another for confirmation. Succeeding runs of the program will ask for the provided username and password after successful user registration. If the provided user credentials are 		correct, show the program menu (referring to the set of bulleted features from Add Food Log to Exit). If not, make the user try again and display how many unsuccessful logins have been made 		so far. Upon reaching 3 unsuccessfully login attempts, show a message for the user to log in again after some time and terminate the program after letting the user press any key to confirm 		the message received.
 
 2. Add Food Log
     The program will be able to create a food log record and store the information in the food logs file. The food name should be unique and no duplicate shall exist.
@@ -12,7 +12,7 @@ Your program should also allow the user to Manage Data, by providing a user-frie
     The program will be able to create a recipe record and store the information in the recipes file. The recipe name should be unique, and no duplicates should exist.
 
 4. Modify Food Log
-    The program will be able to edit a food log one at a time by searching for the food name. When the food name is in the records, display the food log information and proceed with editing the information. Before saving the modifications, the program must seek confirmation if the intended changes are to be applied. If the user confirms the modification, proceed with updating the food log. Otherwise, leave as is.
+    The program will be able to edit a food log one at a time by searching for the food name. When the food name is in the records, display the food log information and proceed with editing the 		information. Before saving the modifications, the program must seek confirmation if the intended changes are to be applied. If the user confirms the modification, proceed with updating the 		food log. Otherwise, leave as is.
 
 5. Modify Recipe
     The program will be able to edit a recipe one at a time by searching for the recipe name. When
@@ -124,9 +124,8 @@ Your program should also allow the user to Manage Data, by providing a user-frie
 
 _________________________________________________________________________________________________________
 BONUS: 
-    A maximum of 10 points may be given for features over & above the requirements, like (1) producing top 5 of the number of times eaten based from the food log (not necessarily with equal count); 
-    (2) producing top 3 recipes of the shortest time to prepare and cook; or other features not conflicting with the given requirements or changing the requirements) subject to evaluation of the teacher. Required features must be completed first before bonus features are credited. Note that
-    use of conio.h, or other advanced C commands/statements may not necessarily merit bonuses.
+    A maximum of 10 points may be given for features over & above the requirements, like (1) producing top 5 of the number of times eaten based from the food log (not necessarily with equal 			count); (2) producing top 3 recipes of the shortest time to prepare and cook; or other features not conflicting with the given requirements or changing the requirements) subject to evaluation 
+	of the teacher. Required features must be completed first before bonus features are credited. Note that use of conio.h, or other advanced C commands/statements may not necessarily merit 			bonuses.
 
 IMPORTANT NOTES:
     1. Use gcc -Wall to compile your C program. Make sure you test your program completely (compiling &
@@ -144,5 +143,10 @@ IMPORTANT NOTES:
         ❒  email the softcopies of all requirements as attachments to YOUR own email address on or before
            the deadline
 
+<<<<<<< HEAD
 GROUP SOLUTION: 
     Once both students are done with their solution: they discuss and compare their respective solutions (ONLY within the group)--note that learning with a peer is the objective here-- to see a possibly different or better way of solving a problem. They then come up with their group's final solution -- which may be the solution of one of the students, or an improvement over both solutions. Only the group's final solution, with internal documentation (part of comment) indicating whose code was used or was it an improved version of both solutions) will be submitted as part of the final deliverables. It is the group solution that will be checked/assessed/graded. Thus, only 1 final set of deliverables should be uploaded by one of the members in the Canvas submission page. [Prior to submission, make sure to indicate the members in the group by JOINing the same group number.]
+=======
+Group Solution: 
+    Once both students are done with their solution: they discuss and compare their respective solutions (ONLY within the group)--note that learning with a peer is the objective here-- to see a 		possibly different or better way of solving a problem. They then come up with their group's final solution -- which may be the solution of one of the students, or an improvement over both 		solutions. Only the group's final solution, with internal documentation (part of comment) indicating whose code was used or was it an improved version of both solutions) will be submitted as 		part of the final deliverables. It is the group solution that will be checked/assessed/graded. Thus, only 1 final set of deliverables should be uploaded by one of the members in the Canvas 		submission page. [Prior to submission, make sure to indicate the members in the group by JOINing the same group number.]
+>>>>>>> 5824c02bc8648c320d1ab80a26186ba11a6b771f
