@@ -5,6 +5,7 @@
 #define MAX_INGREDIENTS 20
 #define MAX_INSTRUCTIONS 20
 #define MAX_USERNAME_LENGTH 51
+#define MAX_FILENAME 30
 
 /* FOOD LOG STRUCT */
 typedef struct 
@@ -154,20 +155,25 @@ int
 verifyNumber(char *str)
 {
     int i;
-
-    for(i = 1; i < 11; i++)
+    
+    if (strlen(str) != 11)
     {
-        if (str[0] != 0)
-        {
-            return 2;
-        }
-        
-        if (str[i] < '0' || str[i] > '9')
+    	return 0;
+	}
+	
+    if (str[0] != '0') 
+    {
+        return 2; 
+    }
+
+    for (i = 1; i < 11; i++)
+    {
+		if (str[i] < '0' || str[i] > '9')
         {
             return 0;
         }
-    }
-    
+	}
+        
     return 1;
 }
 
@@ -181,32 +187,41 @@ int verifyEmail (char *str)
 	
 	length = strlen(str);
 	
-	if (length == 0) {
+	if (length == 0) 
+	{
         return 3;  // empty string
     }
-    if (length > 30) {
+    if (length > 30) 
+	{
         return 2;  // exceeds max length
     }
 
-    for (int i = 0; i < length; i++) {
-        if (str[i] == '@') {
+    for (int i = 0; i < length; i++) 
+	{
+        if (str[i] == '@') 
+		{
             atCount++;
             atIndex = i;
-        } else if (str[i] == '.') {
+        } else if (str[i] == '.') 
+		{
             dotIndex = i;
         }
     }
 
-    if (atCount != 1) {
+    if (atCount != 1) 
+	{
         return 0;  //must have exactly one @
     }
-    if (dotIndex == -1 || atIndex > dotIndex) {
+    if (dotIndex == -1 || atIndex > dotIndex) 
+	{
         return 0;  // must have a '.' after '@'
     }
-    if (atIndex == 0 || dotIndex == length - 1) {
+    if (atIndex == 0 || dotIndex == length - 1) 
+	{
         return 0;  // '@' must not be first, '.' must not be last
     }
-    if (dotIndex - atIndex == 1) {
+    if (dotIndex - atIndex == 1) 
+	{
         return 0;  // no domain name between '@' and '.'
     }
 
@@ -291,177 +306,99 @@ User
 verifyProfile()
 {
     User p;
-    int success = 0;
     char passwordConfirm[21];
-    FILE *userFile = fopen("user.dat", "r");
+    FILE *userFile = fopen("profiles.dat", "r");
 
-    if (userFile != NULL)  // If file exists, load user data and return
+    do
     {
-        fscanf(userFile, "%50s %20s %80[^\n] %30s %11s", 
-               p.username, p.pass, p.name, p.email, p.number);
-        fclose(userFile);
-        printf("User profile loaded.\n");
-        return p;
-    }
-    
-    while (success == 0)
-    {
-        printf("Enter Username: "); //can it have spaces or no idk
+        printf("Enter Username: ");
         scanf("%50s", p.username);
 
-        if (isAlphanumeric(p.username) == 1 && (strlen(p.username) >= 8 && strlen(p.username) <= 50))
+        if (!(isAlphanumeric(p.username) && strlen(p.username) >= 8 && strlen(p.username) <= 50))
         {
-            success = 1;
+            printf("Username must contain 8-50 alphanumeric characters!\n");
         }
-        else
-        {
-            printf("Username must only contain between 8 - 50 alphanumeric characters!\n");
-        }
-    }
 
-    success = 0;
+    } while (!(isAlphanumeric(p.username) && strlen(p.username) >= 8 && strlen(p.username) <= 50));
 
-    //password input
-    while (success == 0)
+    // Password input
+    do
     {
         printf("Enter Password: ");
         scanf("%20s", p.pass);
 
-        if (verifyPass(p.pass) == 1 && withinBounds(p.pass, 8, 20) == 1)
-        {
-            success = 1;
-        }
-        else
-        {
-            if (verifyPass(p.pass) == 0 && withinBounds(p.pass, 8, 20) == 1)
-            {
-                printf("Password must have at least 1 uppercase character, 1 lowercase character, 1 number, and 1 special character(!, @. #, $, %, &, *, and . only)!\n");
-            }
-            else if (verifyPass(p.pass) == 1 && withinBounds(p.pass, 8, 20) == 0)
-            {
-                printf("Password must be between 8 to 20 characters!\n");
-            }
-            else
-            {
-                printf("Password must be between 8 to 20 characters and must have at least 1 uppercase character, 1 lowercase character, 1 number, and 1 special character!\n");
-            }
-        }
-    }
-    
-    while (strcmp(p.pass, passwordConfirm) != 0)
-    {
         printf("Confirm Password: ");
         scanf("%20s", passwordConfirm);
-        if (strcmp(p.pass, passwordConfirm) != 0) 
-		{
-            printf("Passwords do not match. Please try again.\n");
-        }	
-	}
 
+        if (strcmp(p.pass, passwordConfirm) != 0)
+        {
+            printf("Passwords do not match. Try again.\n");
+        }
+        else if (!(verifyPass(p.pass) && withinBounds(p.pass, 8, 20)))
+        {
+            printf("Password must be 8-20 characters and include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character (!, @, #, $, %, &, *, .).\n");
+        }
 
-    success = 0;
+    } while (strcmp(p.pass, passwordConfirm) != 0 || !(verifyPass(p.pass) && withinBounds(p.pass, 8, 20)));
 
-    //full name input
-    while (success == 0)
+    // Full Name input
+    do
     {
         printf("Enter full name: ");
         scanf(" %[^\n]s", p.name);
 
-        if (isAlphabetic(p.name) == 1 && withinBounds(p.name, 5, 80) == 1)
+        if (!(isAlphabetic(p.name) && withinBounds(p.name, 5, 80)))
         {
-            success = 1;
+            printf("Full name must be 5-80 alphabetic characters.\n");
         }
-        else
-        {
-            if (isAlphabetic(p.name) == 0)
-            {
-                printf("Full name must only contain alphabetic characters.\n");
-            }
-            else if (isAlphabetic(p.name) == 1 && withinBounds(p.name, 5, 80) == 0)
-            {
-                printf("Full name must be between 5 and 80 characters.\n");
-            }
-            else
-            {
-                printf("Full name must be between 5 and 80 and contain only alphabetic characters.\n");
-            }
-        }
-        void clearInputBuffer();
-    }
 
-    success = 0;
+    } while (!(isAlphabetic(p.name) && withinBounds(p.name, 5, 80)));
 
-    //email address input
-    while (success == 0)
+    // Email input
+    do
     {
         printf("Enter email address: ");
         scanf("%30s", p.email);
-        
-        if (verifyEmail(p.email) == 1)
-        {
-        	success = 1;
-		}
-		else
-		{
-			if (verifyEmail(p.email) == 3)
-	        {
-	        	printf("Email address should not be empty.\n");
-			}
-			else if (verifyEmail(p.email) == 2)
-			{
-				printf("Email address should not be more than 30 characters.\n");
-			}
-			else
-			{
-				printf("Email address should be valid.\n");
-			}
-		}
-		
-		void clearInputBuffer();
-    }
-    
-    success = 0;
 
-    //mobile number input
-    while (success == 0) //with spaces no work???
+        if (!verifyEmail(p.email))
+        {
+            printf("Invalid email address. Try again.\n");
+        }
+
+    } while (!verifyEmail(p.email));
+
+    // Mobile number input
+    do
     {
-        printf("Enter phone number (w/ no spaces): ");
+        printf("Enter phone number (11 digits, no spaces): ");
         scanf("%11s", p.number);
 
-        if (p.number[0] == '0' && strlen(p.number) == 11)
-        {
-            success = 1;
-        }
-        else 
-        {
-            if (p.number[0] != '0' && strlen(p.number) == 11)
-            {
-                printf("Phone number must start with 0!\n");
-            }
-            else if (p.number[0] == '0' && strlen(p.number) != 11)
-            {
-                printf("Phone number must contain 11 digits!\n");
-            }
-            else
-            {
-                printf("Phone number must start with 0 and contain 11 digits!\n");
-            }
-        }
-		void clearInputBuffer();
-    }
+        int validation = verifyNumber(p.number);
+
+	    if (validation == 0)
+	    {
+	        printf("Phone number must be exactly 11 digits and contain only numbers!\n");
+	    }
+	    else if (validation == 2)
+	    {
+	        printf("Phone number must start with '0'!\n");
+	    }
+
+	} while (verifyNumber(p.number) != 1);
 
     printf("Successful account creation!\n");
-    
-    userFile = fopen("user.dat", "w");
-        if (userFile != NULL) 
-		{
-            fprintf(userFile, "%s\n%s\n%s\n%s\n%s\n", p.username, p.pass, p.name, p.email, p.number);
-            fclose(userFile);
-        } 
-		else 
-		{
-            printf("Error saving user data.\n");
-        }
+
+    // APPEND
+    userFile = fopen("profiles.dat", "a");
+    if (userFile != NULL)
+    {
+        fprintf(userFile, "%s\n%s\n%s\n%s\n%s\n", p.username, p.pass, p.name, p.email, p.number);
+        fclose(userFile);
+    }
+    else
+    {
+        printf("Error saving user data.\n");
+    }
 
     return p;
 }
@@ -471,37 +408,56 @@ verifyProfile()
 int
 verifyUser(User *p)
 {
-    int success = 0;
-    int attempts = 0;
-    int maxAttempts = 3;
-    char verifyPass[21];
-    char verifyUser[51];
-
-    while (attempts < maxAttempts && !success)
+    char inputUser[51], inputPass[21];
+    char storedUser[51], storedPass[21], storedName[81], storedEmail[31], storedNumber[12];
+    int success = 0, attempts = 0;
+    
+    FILE *userFile = fopen("profiles.dat", "r");
+    if (userFile == NULL)
     {
-    	printf("Enter username: ");
-        scanf("%50s", verifyUser);
-        
-        printf("Enter password: ");
-        scanf("%20s", verifyPass);
+        printf("No user profiles found. Please register first.\n");
+        return 0;
+    }
 
-        if (strcmp(p->pass, verifyPass) != 0 || strcmp(p->username, verifyUser) != 0)
+    while (attempts < 3 && !success)
+    {
+        printf("Enter username: ");
+        scanf("%50s", inputUser);
+
+        printf("Enter password: ");
+        scanf("%20s", inputPass);
+
+        rewind(userFile); // Reset file position
+
+        while (fscanf(userFile, "%50s\n%20s\n%80[^\n]\n%30s\n%11s\n", storedUser, storedPass, storedName, storedEmail, storedNumber) != EOF)
+        {
+            if (strcmp(storedUser, inputUser) == 0 && strcmp(storedPass, inputPass) == 0)
+            {
+                printf("\n\nWELCOME %s!\n", storedUser);
+                strcpy(p->username, storedUser);
+                strcpy(p->pass, storedPass);
+                strcpy(p->name, storedName);
+                strcpy(p->email, storedEmail);
+                strcpy(p->number, storedNumber);
+                success = 1;
+                break;
+            }
+        }
+
+        if (!success)
         {
             attempts++;
-            printf("Incorrect username and/or password! Attempt %d / %d\n", attempts, maxAttempts);
-        }
-        else if (strcmp(p->pass, verifyPass) == 0 && strcmp(p->username, verifyUser) == 0)
-        {
-            printf("\n\nWELCOME %s!\n", p->username);
-            success = 1;
+            printf("Incorrect username and/or password! Attempt %d / 3\n", attempts);
         }
     }
-    
+
+    fclose(userFile);
+
     if (!success)
     {
-    	printf("\n\nNumber of attempts reached. Press any key and the program will terminate!\n\n");
-	}
-	
+        printf("\n\nNumber of attempts reached. Press any key to exit!\n\n");
+    }
+
     return success;
 }
 
@@ -636,7 +592,7 @@ int verifyFood(foodLog *f)
 
 int foodNameExists(const char *foodName)
 {
-    FILE *file = fopen("foodlogs.txt", "r");
+    FILE *file = fopen("foodLogs.txt", "r");
     if (file == NULL)
     {
         return 0; // File doesn't exist, so no duplicates
@@ -672,7 +628,7 @@ void addFoodLog()
             return;
         }
 
-        FILE *file = fopen("foodlogs.txt", "a");
+        FILE *file = fopen("foodLogs.txt", "a");
         if (file == NULL)
         {
             printf("Error opening food logs file.\n");
@@ -850,7 +806,7 @@ int recipeNameExists(const char *recipeName)
 {
 	int i;
 	
-    FILE *file = fopen("recipes.txt", "r");
+    FILE *file = fopen("Recipes.txt", "r");
     if (file == NULL)
     {
         return 0; // File doesn't exist, so no duplicates
@@ -898,7 +854,7 @@ void addRecipe()
             return;
         }
 
-        FILE *file = fopen("recipes.txt", "a");
+        FILE *file = fopen("Recipes.txt", "a");
         if (file == NULL)
         {
             printf("Error opening recipes file.\n");
@@ -958,6 +914,18 @@ int displayMenu ()
     printf("Enter your choice: ");
     scanf("%d", &choice);
     
+    validInput = scanf("%d", &choice);
+
+    if (validInput != 1 || choice < 1 || choice > 15)
+    {
+        printf("Invalid input. Please enter a number between 1 and 15.\n");
+
+        while (getchar() != '\n');
+		system("pause");
+    }
+
+    } while (validInput != 1 || choice < 1 || choice > 15);
+
     return choice;
 }
 
@@ -973,7 +941,7 @@ void displayFoodLog(const foodLog *log)
 
 void modifyFoodLog() 
 {
-    FILE *file = fopen("foodlogs.txt", "r");
+    FILE *file = fopen("foodLogs.txt", "r");
     
     if (file == NULL) 
 	{
@@ -1041,8 +1009,8 @@ void modifyFoodLog()
     }
     fclose(file);
     fclose(temp);
-    remove("foodlogs.txt");
-    rename("temp.txt", "foodlogs.txt");
+    remove("foodLogs.txt");
+    rename("temp.txt", "foodLogs.txt");
     
     if (!found) 
 	{
@@ -1076,7 +1044,7 @@ void displayRecipe(const Recipe *recipe)
 
 void modifyRecipe() 
 {
-    FILE *file = fopen("recipes.txt", "r");
+    FILE *file = fopen("Recipes.txt", "r");
     if (file == NULL) 
 	{
         printf("There are no recipes to modify.\n");
@@ -1201,8 +1169,8 @@ void modifyRecipe()
 
     fclose(file);
     fclose(temp);
-    remove("recipes.txt");
-    rename("temp.txt", "recipes.txt");
+    remove("Recipes.txt");
+    rename("temp.txt", "Recipes.txt");
     if (!found) 
 	{
 		printf("Recipe not found.\n");	
@@ -1212,7 +1180,7 @@ void modifyRecipe()
 
 void deleteFoodLog() 
 {
-    FILE *file = fopen("foodlogs.txt", "r");
+    FILE *file = fopen("foodLogs.txt", "r");
     
     displayDivider();
     if (file == NULL) 
@@ -1280,18 +1248,18 @@ void deleteFoodLog()
 
     fclose(file);
     fclose(temp);
-    remove("foodlogs.txt");
-    rename("temp.txt", "foodlogs.txt");
+    remove("foodLogs.txt");
+    rename("temp.txt", "foodLogs.txt");
 
     if (found) 
 	{
         system("pause");
-        FILE *check = fopen("foodlogs.txt", "r");
+        FILE *check = fopen("foodLogs.txt", "r");
         if (check != NULL) {
             fscanf(check, "%*c");
 
             if (feof(check)) {
-                remove("foodlogs.txt");
+                remove("foodLogs.txt");
             }
 
             fclose(check);
@@ -1309,7 +1277,7 @@ void deleteFoodLog()
 void deleteRecipe() 
 {
 	displayDivider();
-    FILE *file = fopen("recipes.txt", "r");
+    FILE *file = fopen("Recipes.txt", "r");
     if (file == NULL) 
 	{
         printf("There are no recipes to delete.\n");
@@ -1411,13 +1379,13 @@ void deleteRecipe()
     
     fclose(file);
     fclose(temp);
-    remove("recipes.txt");
-    rename("temp.txt", "recipes.txt");
+    remove("Recipes.txt");
+    rename("temp.txt", "Recipes.txt");
     
     if (found) 
 	{
         system("pause");
-		FILE *check = fopen("recipes.txt", "r");
+		FILE *check = fopen("Recipes.txt", "r");
         
         if (check != NULL) 
 		{
@@ -1425,7 +1393,7 @@ void deleteRecipe()
             
             if (feof(check)) 
 			{
-                remove("recipes.txt");
+                remove("Recipes.txt");
             }
             
             fclose(check);
@@ -1442,7 +1410,7 @@ void deleteRecipe()
 
 void displayUser(User *profile) 
 {
-	FILE *file = fopen("user.dat", "r");
+	FILE *file = fopen("profiles.dat", "r");
 	
 	displayDivider();
     printf("Username: %s\nName: %s\nEmail: %s\nNumber: %s\n",
@@ -1474,7 +1442,7 @@ int compareDates(const char *date1, const char *date2)
 
 void displayAllFoodLogs() 
 {
-    FILE *foodFile = fopen("foodlogs.txt", "r");
+    FILE *foodFile = fopen("foodLogs.txt", "r");
     
     if (foodFile == NULL) 
 	{
@@ -1524,7 +1492,7 @@ void displayAllFoodLogs()
 
 void displayAllRecipes() 
 {
-    FILE *recipeFile = fopen("recipes.txt", "r");
+    FILE *recipeFile = fopen("Recipes.txt", "r");
     
     if (recipeFile == NULL) 
 	{
@@ -1533,32 +1501,32 @@ void displayAllRecipes()
     }
 
     Recipe recipes[20];
-    int logCount = 0;
+    int recipeCount = 0;
 
     while (fscanf(recipeFile, "%50[^\n]\n%160[^\n]\n%d\n%d\n%d\n",
-                  recipes[logCount].name, recipes[logCount].desc, &recipes[logCount].prepTime, &recipes[logCount].cookTime, &recipes[logCount].numIng) == 5) 
+                  recipes[recipeCount].name, recipes[recipeCount].desc, &recipes[recipeCount].prepTime, &recipes[recipeCount].cookTime, &recipes[recipeCount].numIng) == 5) 
 	{
-        for (int i = 0; i < recipes[logCount].numIng; i++) 
+        for (int i = 0; i < recipes[recipeCount].numIng; i++) 
 		{
-            fscanf(recipeFile, "%80[^\n]\n", recipes[logCount].ingredients[i]);
+            fscanf(recipeFile, "%80[^\n]\n", recipes[recipeCount].ingredients[i]);
         }
         
-        fscanf(recipeFile, "%d\n", &recipes[logCount].numInstructions);
+        fscanf(recipeFile, "%d\n", &recipes[recipeCount].numInstructions);
         
-        for (int i = 0; i < recipes[logCount].numInstructions; i++) 
+        for (int i = 0; i < recipes[recipeCount].numInstructions; i++) 
 		{
-            fscanf(recipeFile, "%100[^\n]\n", recipes[logCount].instructions[i]);
+            fscanf(recipeFile, "%100[^\n]\n", recipes[recipeCount].instructions[i]);
         }
-        logCount++;
+        recipeCount++;
     }
 
     fclose(recipeFile);
 
-    if (logCount > 0) 
+    if (recipeCount > 0) 
 	{
-        for (int i = 0; i < logCount - 1; i++) 
+        for (int i = 0; i < recipeCount - 1; i++) 
 		{
-            for (int j = 0; j < logCount - i - 1; j++) 
+            for (int j = 0; j < recipeCount - i - 1; j++) 
 			{
                 if (strcmp(recipes[j].name, recipes[j + 1].name) > 0)
 				{
@@ -1570,21 +1538,21 @@ void displayAllRecipes()
         }
 
         printf("\nALL RECIPES (Ascending Order):\n");
-        for (int i = 0; i < logCount; i++) 
+        for (int i = 0; i < recipeCount; i++) 
 		{
 			printf("Recipe #%d\n", i+1);
             displayRecipe(&recipes[i]);
             printf("\n");
         }
     } else {
-        printf("No food logs found.\n");
+        printf("No recipes found.\n");
     }
     system("pause");
 }
 
 int findUser(const char *username, User *foundUser) 
 {
-    FILE *userFile = fopen("user.dat", "r");
+    FILE *userFile = fopen("profiles.dat", "r");
     if (userFile == NULL) 
 	{
         return 0;
@@ -1628,8 +1596,8 @@ void displayAllByUsername(User *profile)
             printf("Username: %s\n", user.username);
         }
 
-        FILE *foodFile = fopen("foodlogs.txt", "r");
-        FILE *recipeFile = fopen("recipes.txt", "r");
+        FILE *foodFile = fopen("foodLogs.txt", "r");
+        FILE *recipeFile = fopen("Recipes.txt", "r");
         int found = 0;
 
         if (foodFile != NULL) 
@@ -1693,7 +1661,9 @@ void displayAllByUsername(User *profile)
 
 void searchFoodLog() 
 {
-    FILE *foodFile = fopen("foodlogs.txt", "r");
+    FILE *foodFile = fopen("foodLogs.txt", "r");
+    char searchName[51];
+    int found = 0;
     
     displayDivider();
     if (foodFile == NULL) 
@@ -1705,13 +1675,11 @@ void searchFoodLog()
         return;
     }
 
-    char searchName[51];
     printf("Enter the food name to search: ");
     scanf(" %50[^\n]", searchName);
 
     foodLog log;
-    int found = 0;
-
+    
     while (fscanf(foodFile, "%50[^\n]\n%c\n%d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
             log.name, &log.type, &log.timesEaten, log.ftDate, log.ftPlace, log.desc) == 6) 
 	{
@@ -1724,7 +1692,8 @@ void searchFoodLog()
 
     fclose(foodFile);
 
-    if (!found) {
+    if (!found) 
+	{
         printf("No such food has been logged.\n");
     }
 
@@ -1735,7 +1704,7 @@ void searchFoodLog()
 
 void searchRecipe() 
 {
-    FILE *recipeFile = fopen("recipes.txt", "r");
+    FILE *recipeFile = fopen("Recipes.txt", "r");
     
     displayDivider();
     if (recipeFile == NULL) 
@@ -1787,10 +1756,12 @@ void searchRecipe()
     getchar();
 }
 
+
 void showLoadingBar() 
 {
     printf("\nLogging in . . .");
-    for (int i = 0; i <= 100; i += 25) {
+    for (int i = 0; i <= 100; i += 25) 
+	{
         printf("\rLogging in . . . [%3d%%] ", i);
         usleep(350000);
     }

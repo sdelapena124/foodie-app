@@ -6,41 +6,92 @@
 
 #include "mpfxn2.c"
 
-int
-main()
+int main() 
 {
-	User profile;
-	int choice;
-	
-    FILE *userFile = fopen("user.dat", "r");
-
-    if (userFile != NULL) 
-    {
-        fclose(userFile);  // Close file after confirming existence
-        profile = verifyProfile();  // Load existing user profile
-        int loginSuccessful = verifyUser(&profile);
+    User profile;
+    int choice;
+    char filename[MAX_FILENAME + 1];
+    int loginSuccessful = 0;
+    int nOption;
+    
+    while (1) 
+	{
+		printf("\t\t----------------------------------------------------------------------------\n");
+    	printf("\t\t|                                                                          |\n");
+    	printf("\t\t|                              [1] Login               	                   |\n");
+    	printf("\t\t|                              [2] Register           	                   |\n");
+    	printf("\t\t|                              [3] Exit               	                   |\n");
+    	printf("\t\t|                                                                          |\n");
+    	printf("\t\t----------------------------------------------------------------------------\n");
+        printf("\t\t\tEnter option number: ");
         
-        if (loginSuccessful)
+        if (scanf("%d", &nOption) != 1) 
         {
-        	showLoadingBar();
-        	do 
-			{
-		        // Display menu
-		        choice = displayMenu();
+            printf("Invalid input. Please enter a number between 1-3.\n");
 
-		        // Process user choice
-		        switch (choice) 
+            // Clear input buffer
+            while (getchar() != '\n');
+
+            system("pause");
+            system("cls");
+        }
+        
+        else
+        {
+
+	        if (nOption == 1) 
+			{
+	            FILE *userFile = fopen("profiles.dat", "r");
+	            if (userFile != NULL) 
 				{
-		            case 1:
-		                addFoodLog();
-		                break;
-		            case 2:
-		                addRecipe();
-		                break;
-		            case 3:
-		            	modifyFoodLog();
-		                break;
-		            case 4:
+	                fclose(userFile);
+	                loginSuccessful = verifyUser(&profile);
+	            } 
+				else 
+				{
+	                printf("\nNo user profile found. Please register first.\n");
+	            	system("pause");
+	            	system("cls");
+	            }
+	        } 
+			else if (nOption == 2) 
+			{
+	            profile = verifyProfile();
+	            system("pause");
+	        } 
+			else if (nOption == 3) 
+			{
+	            printf("Exiting program...\n");
+	            return 0;
+	        } 
+			else 
+			{
+	            printf("Invalid choice. Please try again.\n");
+	            system("pause");
+	            system("cls");
+	        }
+		}
+		
+        if (loginSuccessful) 
+		{
+            showLoadingBar();
+            do 
+			{
+                // Display menu
+                choice = displayMenu();
+                // Process user choice
+                switch (choice) 
+				{
+                    case 1:
+                        addFoodLog();
+                        break;
+                    case 2:
+                        addRecipe();
+                        break;
+                    case 3:
+                        modifyFoodLog();
+                        break;
+                    case 4:
                         modifyRecipe();
                         break;
                     case 5:
@@ -61,106 +112,28 @@ main()
                     case 10:
                         displayAllRecipes();
                         break;
-		            case 11:
-		                searchFoodLog();
-		                break;
-		            case 12:
-		                searchRecipe();
-		                break;
-		            case 13:
-		                
-		                break;
-		            case 14:
-		                
-		                break;
-		            case 15:
-		            	
-		                printf("Exiting program...\n");
-		                break;
-		            default:
-		                printf("Invalid choice. Please try again.\n");
-        		}
-    		} while (choice != 15);
-        }
-        else
-        {
-            printf("Program terminated due to failed login.\n");
-        }
+                    case 11:
+                        searchFoodLog();
+                        break;
+                    case 12:
+                        searchRecipe();
+                        break;
+                    case 13:
+                        break;
+                    case 14:
+                        break;
+                    case 15:
+                        printf("Exiting program...\n");
+                        return 0;
+                    default:
+                        printf("Invalid choice. Please try again.\n");
+                }
+            } while (choice != 15 && loginSuccessful);
+        } 
+//		else 
+//		{
+//            printf("Program terminated due to failed login.\n");
+//        }
     }
-    else
-    {
-        profile = verifyProfile();  // Register a new user if file does not exist
-        sleep(1);
-        system("cls");
-        int loginSuccessful = verifyUser(&profile);
-
-        if (loginSuccessful)
-        {
-        	showLoadingBar();
-        	do 
-			{
-		        // Display menu
-		        choice = displayMenu();
-
-		        // Process user choice
-		        switch (choice) 
-				{
-		            case 1:
-		                addFoodLog();
-		                break;
-		            case 2:
-		                addRecipe();
-		                break;
-		            case 3:
-		            	modifyFoodLog();
-		                break;
-		            case 4:
-                        modifyRecipe();
-                        break;
-                    case 5:
-                        deleteFoodLog();
-                        break;
-                    case 6:
-                        deleteRecipe();
-                        break;
-                    case 7:
-                        displayUser(&profile);
-                        break;
-                    case 8:
-                        displayAllByUsername(&profile);
-                        break;
-		            case 9:
-		                displayAllRecipes();
-		                break;
-		            case 10:
-		                displayAllRecipes();
-		                break;
-		            case 11:
-		                searchFoodLog();
-		                break;
-		            case 12:
-		                searchRecipe();
-		                break;
-		            case 13:
-		                
-		                break;
-		            case 14:
-		                
-		                break;
-		            case 15:
-		                
-		                printf("Exiting program...\n");
-		                break;
-		            default:
-		                printf("Invalid choice. Please try again.\n");
-        		}
-    		} while (choice != 15);
-        }
-        else
-        {
-            printf("Program terminated due to failed login.\n");
-        }
-    }
-
     return 0;
 }
