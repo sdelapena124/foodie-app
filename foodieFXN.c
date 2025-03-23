@@ -64,7 +64,7 @@ typedef struct
 //Function displays divider
 void displayDivider ()
 {
-	printf("====================================\n");
+	printf("==============================================================================\n");
 }
 
 //Function checks if string is alphanumeric
@@ -321,6 +321,10 @@ verifyProfile()
     FILE *userFile = fopen("profiles.dat", "r");
     int validPassword = 0;
 
+    displayDivider();
+    printf("\t\tREGISTRATION\n");
+    displayDivider();
+
     do
     {
         printf("Enter Username: ");
@@ -330,7 +334,6 @@ verifyProfile()
         {
             printf("Username must contain 8-50 alphanumeric characters!\n");
         }
-
     } while (!(isAlphanumeric(p.username) && strlen(p.username) >= 8 && strlen(p.username) <= 50));
 
     // Password input

@@ -48,13 +48,14 @@ int main()
 	            } 
 				else 
 				{
-	                printf("\nNo user profile found. Please register first.\n");
+	                printf("\n\t\tNo user profile found. Please register first.\n");
 	            	system("pause");
 	            	system("cls");
 	            }
 	        } 
 			else if (nOption == 2) 
 			{
+                system("cls");
 	            profile = verifyProfile();
 	            system("pause");
 	        } 
@@ -65,7 +66,7 @@ int main()
 	        } 
 			else 
 			{
-	            printf("Invalid choice. Please try again.\n");
+	            printf("Invalid choice. Please try again.\n\t\t");
 	            system("pause");
 	            system("cls");
 	        }

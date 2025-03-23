@@ -134,14 +134,15 @@ IMPORTANT NOTES:
     2. Do not use brute force. Use appropriate conditional statements properly. Use, wherever 
        appropriate, appropriate loops & functions properly.
     3. You may use topics outside the scope of CCPROG2 but this will be self-study. Goto label, exit(),
-       break (excepT in switch), continue, global variables, calling main() are not allowed.
+       break (except in switch), continue, global variables, calling main() are not allowed.
     4. Include internal documentation (comments) in your program.
     5. The following is a checklist of the deliverables:
         ❒ Upload via AnimoSpace submission:
             ❒ source code*
             ❒ test script**
             ❒ sample text file exported from your program
-        ❒ email the softcopies of all requirements as attachments to YOUR own email address on or before the deadline
+        ❒  email the softcopies of all requirements as attachments to YOUR own email address on or before
+           the deadline
 
-Group Solution: 
+GROUP SOLUTION: 
     Once both students are done with their solution: they discuss and compare their respective solutions (ONLY within the group)--note that learning with a peer is the objective here-- to see a possibly different or better way of solving a problem. They then come up with their group's final solution -- which may be the solution of one of the students, or an improvement over both solutions. Only the group's final solution, with internal documentation (part of comment) indicating whose code was used or was it an improved version of both solutions) will be submitted as part of the final deliverables. It is the group solution that will be checked/assessed/graded. Thus, only 1 final set of deliverables should be uploaded by one of the members in the Canvas submission page. [Prior to submission, make sure to indicate the members in the group by JOINing the same group number.]
