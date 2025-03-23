@@ -11,6 +11,8 @@
 typedef struct 
 {
     char name[51];
+    char username[51];
+    char fullname[81];
     char type;
     int timesEaten;
     char ftDate[11];
@@ -22,6 +24,8 @@ typedef struct
 typedef struct 
 {
     char name[51];
+    char username[51];
+    char fullname[81];
     char desc[161];
     int prepTime;
     int cookTime;
@@ -456,7 +460,7 @@ verifyUser(User *p)
         if (!success)
         {
             attempts++;
-            printf("Incorrect username and/or password! Attempt %d / 3\n", attempts);
+            printf("Incorrect username and/or password! Attempt %d / 3\n\n", attempts);
         }
     }
 
@@ -623,7 +627,7 @@ int foodNameExists(const char *foodName)
     return 0; // Food name doesn't exist
 }
 
-void addFoodLog()
+void addFoodLog(User *profile)
 {
     foodLog newLog; // Declare the foodLog struct
     
@@ -645,8 +649,9 @@ void addFoodLog()
             return;
         }
 
-        fprintf(file, "%s\n%c\n%d\n%s\n%s\n%s\n",
-                newLog.name, newLog.type, newLog.timesEaten,
+        fprintf(file, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
+                newLog.name, profile->username, profile->name, 
+                newLog.type, newLog.timesEaten,
                 newLog.ftDate, newLog.ftPlace, newLog.desc);
 
         fclose(file);
@@ -849,7 +854,7 @@ int recipeNameExists(const char *recipeName)
     return 0; // Food name doesn't exist
 }
 
-void addRecipe()
+void addRecipe(User *profile)
 {
     Recipe newRecipe; // Declare the foodLog struct
     
@@ -869,10 +874,13 @@ void addRecipe()
             printf("Error opening recipes file.\n");
             return;
         }
-
-        fprintf(file, "%s\n%s\n%d\n%d\n%d\n",
-                newRecipe.name, newRecipe.desc, newRecipe.prepTime,
-                newRecipe.cookTime, newRecipe.numIng);
+        
+        strcpy(newRecipe.username, profile->username);
+        strcpy(newRecipe.fullname, profile->name);
+        
+        fprintf(file, "%s\n%s %s\n%s\n%d %d\n%d\n",
+                newRecipe.name, newRecipe.username, newRecipe.fullname,
+                newRecipe.desc, newRecipe.prepTime, newRecipe.cookTime, newRecipe.numIng);
 
         for(int i = 0; i < newRecipe.numIng; i++)
 		{
@@ -907,23 +915,27 @@ int displayMenu ()
 	{
 		system("cls");
 		
-	    printf("Foodie App Menu\n");
-	    printf("[1] Add Food Log\n");
-	    printf("[2] Add Recipe\n");
-	    printf("[3] Modify Food Log\n");
-	    printf("[4] Modify Recipe\n");
-	    printf("[5] Delete Food Log\n");
-	    printf("[6] Delete Recipe\n");
-	    printf("[7] Display User\n");
-	    printf("[8] Display All Food Log and Recipe by Username\n");
-	    printf("[9] Display All Food Log\n");
-	    printf("[10] Display All Recipe\n");
-	    printf("[11] Search Food Log\n");
-	    printf("[12] Search Recipe\n");
-	    printf("[13] Export Data\n");
-	    printf("[14] Import Data\n");
-	    printf("[15] Exit\n");
-	    printf("Enter your choice: ");
+	    printf("=============================================\n");
+        printf("|              FOODIE APP MENU              |\n");
+        printf("=============================================\n");
+        printf("| [1]   + Add Food Log                      |\n");
+        printf("| [2]   + Add Recipe                        |\n");
+        printf("| [3]   + Modify Food Log                   |\n");
+        printf("| [4]   + Modify Recipe                     |\n");
+        printf("| [5]   + Delete Food Log                   |\n");
+        printf("| [6]   + Delete Recipe                     |\n");
+        printf("| [7]   + Display User                      |\n");
+        printf("| [8]   + Display All Logs by Username      |\n");
+        printf("| [9]   + Display All Food Logs             |\n");
+        printf("| [10]  + Display All Recipes               |\n");
+        printf("| [11]  + Search Food Log                   |\n");
+        printf("| [12]  + Search Recipe                     |\n");
+        printf("| [13]  + Export Data                       |\n");
+        printf("| [14]  + Import Data                       |\n");
+        printf("| [15]  + Exit                              |\n");
+        printf("=============================================\n");
+	    
+	    printf("Enter your choice (1-15): ");
 	    
 	    validInput = scanf("%d", &choice);
 	
@@ -950,7 +962,7 @@ void displayFoodLog(const foodLog *log)
     printf("Description: %s\n", log->desc);
 }
 
-void modifyFoodLog() 
+void modifyFoodLog(User *profile) 
 {
     FILE *file = fopen("foodLogs.txt", "r");
     
@@ -978,7 +990,7 @@ void modifyFoodLog()
     FILE *temp = fopen("temp.txt", "w");
     char foodName[51];
     printf("Enter food name to modify: ");
-    scanf("%50s", foodName);
+    scanf(" %[^\n]", foodName);
     
     clearInputBuffer();
 
@@ -986,9 +998,12 @@ void modifyFoodLog()
 	foodLog tempLog;
 
     int found = 0;
-    while (fscanf(file, "%50[^\n]\n%c\n%d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
-                  log.name, &log.type, &log.timesEaten, log.ftDate, log.ftPlace, log.desc) == 6) {
-        if (strcmp(log.name, foodName) == 0) {
+    while (fscanf(file, "%50[^\n]\n%50s %[^\n]\n%c %d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
+                  log.name, log.username, log.fullname, &log.type, &log.timesEaten,
+                  log.ftDate, log.ftPlace, log.desc) == 8) 
+	{
+        if (strcmp(log.name, foodName) == 0) 
+		{
             found = 1;
             displayDivider();
             printf("Current:\n");
@@ -1004,18 +1019,22 @@ void modifyFoodLog()
             scanf(" %c", &confirm);
 
             if (confirm == 'y' || confirm == 'Y') {
-                fprintf(temp, "%s\n%c\n%d\n%s\n%s\n%s\n",
-                        tempLog.name, tempLog.type, tempLog.timesEaten, tempLog.ftDate, tempLog.ftPlace, tempLog.desc);
+                fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
+                        tempLog.name, tempLog.username, tempLog.fullname, tempLog.type, tempLog.timesEaten, tempLog.ftDate, tempLog.ftPlace, tempLog.desc);
                 printf("Food log modified successfully.\n");
-            } else {
-                fprintf(temp, "%s\n%c\n%d\n%s\n%s\n%s\n",
-                        log.name, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
+            } 
+			else 
+			{
+                fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
+                        log.name, log.username, log.fullname, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
                 printf("Modification cancelled.\n");
             }
 
-        } else {
-            fprintf(temp, "%s\n%c\n%d\n%s\n%s\n%s\n",
-                    log.name, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
+        } 
+		else 
+		{
+            fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
+                    log.name, log.username, log.fullname, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
         }
     }
     fclose(file);
@@ -1053,7 +1072,7 @@ void displayRecipe(const Recipe *recipe)
     }
 }
 
-void modifyRecipe() 
+void modifyRecipe(User *profile) 
 {
     FILE *file = fopen("Recipes.txt", "r");
     if (file == NULL) 
@@ -1089,8 +1108,8 @@ void modifyRecipe()
     
     int i, found = 0;
 
-    while (fscanf(file, "%50[^\n]\n%160[^\n]\n%d\n%d\n%d\n",
-            recipe.name, recipe.desc, &recipe.prepTime, &recipe.cookTime, &recipe.numIng) == 5) 
+    while (fscanf(file, "%50[^\n]\n%50s %[^\n]\n%160[^\n]\n%d %d\n%d\n",
+            recipe.name, recipe.username, recipe.fullname, recipe.desc, &recipe.prepTime, &recipe.cookTime, &recipe.numIng) == 7) 
 	{
         for (i = 0; i < recipe.numIng; i++) 
 		{
@@ -1108,7 +1127,7 @@ void modifyRecipe()
 		{
             found = 1;
             displayDivider();
-            printf("\nCurrent:\n");
+            printf("\nCurrent Recipe:\n");
             displayRecipe(&recipe);
 
             tempRecipe = recipe;
@@ -1123,8 +1142,9 @@ void modifyRecipe()
 
             if (confirm == 'y' || confirm == 'Y') 
 			{
-                fprintf(temp, "%s\n%s\n%d\n%d\n%d\n",
-                        tempRecipe.name, tempRecipe.desc, tempRecipe.prepTime, tempRecipe.cookTime, tempRecipe.numIng);
+                fprintf(temp, "%s\n%s %s\n%s\n%d %d\n%d\n",
+                        tempRecipe.name, tempRecipe.username, tempRecipe.fullname, tempRecipe.desc,
+                        tempRecipe.prepTime, tempRecipe.cookTime, tempRecipe.numIng);
 
                 for (i = 0; i < tempRecipe.numIng; i++) 
 				{
@@ -1142,8 +1162,9 @@ void modifyRecipe()
             } 
 			else 
 			{
-                fprintf(temp, "%s\n%s\n%d\n%d\n%d\n",
-                        recipe.name, recipe.desc, recipe.prepTime, recipe.cookTime, recipe.numIng);
+                fprintf(temp, "%s\n%s %s\n%s\n%d %d\n%d\n",
+                        recipe.name, recipe.username, recipe.fullname, recipe.desc,
+                        recipe.prepTime, recipe.cookTime, recipe.numIng);
 
                 for (i = 0; i < recipe.numIng; i++) 
 				{
@@ -1161,8 +1182,9 @@ void modifyRecipe()
         } 
 		else 
 		{
-            fprintf(temp, "%s\n%s\n%d\n%d\n%d\n",
-                    recipe.name, recipe.desc, recipe.prepTime, recipe.cookTime, recipe.numIng);
+            fprintf(temp, "%s\n%s %s\n%s\n%d %d\n%d\n",
+                        recipe.name, recipe.username, recipe.fullname, recipe.desc,
+                        recipe.prepTime, recipe.cookTime, recipe.numIng);
 
             for (i = 0; i < recipe.numIng; i++) 
 			{
@@ -1189,7 +1211,7 @@ void modifyRecipe()
     Sleep(1000);
 }
 
-void deleteFoodLog() 
+void deleteFoodLog(User *profile) 
 {
     FILE *file = fopen("foodLogs.txt", "r");
     
@@ -1219,15 +1241,16 @@ void deleteFoodLog()
     FILE *temp = fopen("temp.txt", "w");
     char foodName[51];
     printf("Enter food name to delete: ");
-    scanf("%50s", foodName);
+    scanf(" %[^\n]", foodName);
     
     clearInputBuffer();
 
     foodLog log;
     int found = 0;
 
-    while (fscanf(file, "%50[^\n]\n%c\n%d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
-        log.name, &log.type, &log.timesEaten, log.ftDate, log.ftPlace, log.desc) == 6) 
+    while (fscanf(file, "%50[^\n]\n%50s %[^\n]\n%c %d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
+                  log.name, log.username, log.fullname, &log.type, &log.timesEaten,
+                  log.ftDate, log.ftPlace, log.desc) == 8) 
 	{
         if (strcmp(log.name, foodName) == 0) 
 		{
@@ -1245,15 +1268,17 @@ void deleteFoodLog()
             } 
 			else
 			{
-                fprintf(temp, "%s\n%c\n%d\n%s\n%s\n%s\n",
-                log.name, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
+                fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
+                            log.name, log.username, log.fullname, log.type, log.timesEaten, 
+                            log.ftDate, log.ftPlace, log.desc);
                 printf("Deletion cancelled. Food log retained.\n");
             }
         }
 		else 
 		{
-            fprintf(temp, "%s\n%c\n%d\n%s\n%s\n%s\n",
-            log.name, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
+            fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
+                    log.name, log.username, log.fullname, log.type, log.timesEaten, 
+                    log.ftDate, log.ftPlace, log.desc);
         }
     }
 
@@ -1321,8 +1346,9 @@ void deleteRecipe()
     Recipe recipe;
     int i, found = 0;
     
-    while (fscanf(file, "%50[^\n]\n%160[^\n]\n%d\n%d\n%d\n",
-                  recipe.name, recipe.desc, &recipe.prepTime, &recipe.cookTime, &recipe.numIng) == 5) {
+    while (fscanf(file, "%50[^\n]\n%50s %[^\n]\n%160[^\n]\n%d %d\n%d\n",
+                  recipe.name, recipe.username, recipe.fullname, recipe.desc,
+                  &recipe.prepTime, &recipe.cookTime, &recipe.numIng) == 7) {
         for (i = 0; i < recipe.numIng; i++) 
 		{
             fscanf(file, "%80[^\n]\n", recipe.ingredients[i]);
@@ -1351,8 +1377,9 @@ void deleteRecipe()
             } 
 			else 
 			{
-                fprintf(temp, "%s\n%s\n%d\n%d\n%d\n",
-                        recipe.name, recipe.desc, recipe.prepTime, recipe.cookTime, recipe.numIng);
+                fprintf(temp, "%s\n%s %s\n%s\n%d %d\n%d\n",
+                        recipe.name, recipe.username, recipe.fullname, recipe.desc,
+                        recipe.prepTime, recipe.cookTime, recipe.numIng);
 
                 for (i = 0; i < recipe.numIng; i++) 
 				{
@@ -1371,8 +1398,9 @@ void deleteRecipe()
 		else 
 		{
 
-            fprintf(temp, "%s\n%s\n%d\n%d\n%d\n",
-                    recipe.name, recipe.desc, recipe.prepTime, recipe.cookTime, recipe.numIng);
+            fprintf(temp, "%s\n%s %s\n%s\n%d %d\n%d\n",
+                        recipe.name, recipe.username, recipe.fullname, recipe.desc,
+                        recipe.prepTime, recipe.cookTime, recipe.numIng);
 
             for (i = 0; i < recipe.numIng; i++) 
 			{
@@ -1423,9 +1451,14 @@ void displayUser(User *profile)
 {
 	FILE *file = fopen("profiles.dat", "r");
 	
-	displayDivider();
-    printf("Username: %s\nName: %s\nEmail: %s\nNumber: %s\n",
-           profile->username, profile->name, profile->email, profile->number);
+	printf("=============================================\n");
+    printf("|                 USER PROFILE              |\n");
+    printf("=============================================\n");
+    printf("| Username : %-30s |\n", profile->username);
+    printf("| Name     : %-30s |\n", profile->name);
+    printf("| Email    : %-30s |\n", profile->email);
+    printf("| Number   : %-30s |\n", profile->number);
+    printf("=============================================\n");
     system("pause");
 
     clearInputBuffer();
@@ -1439,13 +1472,15 @@ int compareDates(const char *date1, const char *date2)
     sscanf(date1, "%d/%d/%d", &month1, &day1, &year1);
     sscanf(date2, "%d/%d/%d", &month2, &day2, &year2);
     
-    printf("Comparing: %s and %s\n", date1, date2);
-    printf("Date 1: %d/%d/%d, Date 2: %d/%d/%d\n", month1, day1, year1, month2, day2, year2);
+//    printf("Comparing: %s and %s\n", date1, date2);
+//    printf("Date 1: %d/%d/%d, Date 2: %d/%d/%d\n", month1, day1, year1, month2, day2, year2);
 
-    if (year1 != year2) {
+    if (year1 != year2) 
+	{
         return year1 - year2;
     }
-    if (month1 != month2) {
+    if (month1 != month2) 
+	{
         return month1 - month2;
     }
     return day1 - day2;
@@ -1457,22 +1492,27 @@ void displayAllFoodLogs()
     
     if (foodFile == NULL) 
 	{
-        printf("Error opening food logs file.\n");
+        printf("=============================================\n");
+        printf("|        ERROR OPENING FOOD LOGS FILE        |\n");
+        printf("=============================================\n");
+        system("pause");
         return;
     }
 
     foodLog logs[50];
     int logCount = 0;
 
-    while (fscanf(foodFile, "%50[^\n]\n%c\n%d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
-                  logs[logCount].name, &logs[logCount].type, &logs[logCount].timesEaten,
-                  logs[logCount].ftDate, logs[logCount].ftPlace, logs[logCount].desc) == 6) {
+    while (fscanf(foodFile, "%50[^\n]\n%50s %50[^\n]\n%c %d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
+                  logs[logCount].name, logs[logCount].username, logs[logCount].fullname, 
+                  &logs[logCount].type, &logs[logCount].timesEaten, 
+                  logs[logCount].ftDate, logs[logCount].ftPlace, logs[logCount].desc) == 8) 
+	{
         logCount++;
     }
 
     fclose(foodFile);
-
-    if (logCount > 0) 
+    
+	if (logCount > 0) 
 	{
         for (int i = 0; i < logCount - 1; i++) 
 		{
@@ -1487,15 +1527,31 @@ void displayAllFoodLogs()
             }
         }
 
-        printf("\nALL FOOD LOGS (Descending Order):\n");
+        printf("=============================================\n");
+        printf("|             ALL FOOD LOGS                 |\n");
+        printf("|      (Sorted by Date - Descending)        |\n");
+        printf("=============================================\n");
+
         for (int i = 0; i < logCount; i++) 
 		{
-			printf("Food Log #%d\n", i+1);
-            displayFoodLog(&logs[i]);
-            printf("\n");
+            printf("| Food Log #%d                               |\n", i + 1);
+            printf("=============================================\n");
+            printf("| Name       : %-30s |\n", logs[i].name);
+            printf("| Username   : %-30s |\n", logs[i].username);
+            printf("| Full Name  : %-30s |\n", logs[i].fullname);
+            printf("| Type       : %-30c |\n", logs[i].type);
+            printf("| Times Eaten: %-30d |\n", logs[i].timesEaten);
+            printf("| First Tried: %-30s |\n", logs[i].ftDate);
+            printf("| Location   : %-30s |\n", logs[i].ftPlace);
+            printf("| Description: %-30s |\n", logs[i].desc);
+            printf("=============================================\n");
         }
-    } else {
-        printf("No food logs found.\n");
+    } 
+	else 
+	{
+        printf("=============================================\n");
+        printf("|           NO FOOD LOGS FOUND              |\n");
+        printf("=============================================\n");
     }
     system("pause");
 }
@@ -1507,15 +1563,20 @@ void displayAllRecipes()
     
     if (recipeFile == NULL) 
 	{
-        printf("Error opening recipes file.\n");
+        printf("=============================================\n");
+        printf("|         ERROR OPENING RECIPES FILE        |\n");
+        printf("=============================================\n");
+        system("pause");
         return;
     }
 
     Recipe recipes[20];
     int recipeCount = 0;
 
-    while (fscanf(recipeFile, "%50[^\n]\n%160[^\n]\n%d\n%d\n%d\n",
-                  recipes[recipeCount].name, recipes[recipeCount].desc, &recipes[recipeCount].prepTime, &recipes[recipeCount].cookTime, &recipes[recipeCount].numIng) == 5) 
+    while (fscanf(recipeFile, "%50[^\n]\n%50s %[^\n]\n%160[^\n]\n%d %d\n%d\n",
+                  recipes[recipeCount].name, recipes[recipeCount].username, recipes[recipeCount].fullname,
+				  recipes[recipeCount].desc, &recipes[recipeCount].prepTime, &recipes[recipeCount].cookTime, 
+				  &recipes[recipeCount].numIng) == 7) 
 	{
         for (int i = 0; i < recipes[recipeCount].numIng; i++) 
 		{
@@ -1548,15 +1609,43 @@ void displayAllRecipes()
             }
         }
 
-        printf("\nALL RECIPES (Ascending Order):\n");
+        printf("=============================================\n");
+        printf("|                ALL RECIPES                |\n");
+        printf("|         (Sorted by Name - Ascending)      |\n");
+        printf("=============================================\n");
+
         for (int i = 0; i < recipeCount; i++) 
-		{
-			printf("Recipe #%d\n", i+1);
-            displayRecipe(&recipes[i]);
-            printf("\n");
+        {
+            printf("| Recipe #%d                                 |\n", i+1);
+            printf("=============================================\n");
+            printf("| Name        : %-30s |\n", recipes[i].name);
+            printf("| Author      : %-30s |\n", recipes[i].fullname);
+            printf("| Username    : %-30s |\n", recipes[i].username);
+            printf("| Description : %-30s |\n", recipes[i].desc);
+            printf("| Prep Time   : %-30d |\n", recipes[i].prepTime);
+            printf("| Cook Time   : %-30d |\n", recipes[i].cookTime);
+            printf("| Ingredients : %-30d |\n", recipes[i].numIng);
+
+            for (int j = 0; j < recipes[i].numIng; j++) 
+			{
+                printf("| - %-40s |\n", recipes[i].ingredients[j]);
+            }
+
+            printf("| Instructions: %-30d |\n", recipes[i].numInstructions);
+            printf("=============================================\n");
+
+            for (int j = 0; j < recipes[i].numInstructions; j++) 
+			{
+                printf("| Step %d: %-40s |\n", j + 1, recipes[i].instructions[j]);
+            }
+            printf("=============================================\n\n");
         }
-    } else {
-        printf("No recipes found.\n");
+    } 
+	else 
+	{
+        printf("=============================================\n");
+        printf("|           NO RECIPES FOUND                |\n");
+        printf("=============================================\n");
     }
     system("pause");
 }
@@ -1591,80 +1680,118 @@ void displayAllByUsername(User *profile)
     char username[MAX_USERNAME_LENGTH];
     User user;
 
-    printf("Enter username to search: ");
+    printf("=============================================\n");
+    printf("|         SEARCH FOOD LOGS & RECIPES        |\n");
+    printf("=============================================\n");
+    printf("| Enter username to search: ");
     scanf("%50s", username);
     clearInputBuffer();
 
     if (findUser(username, &user)) 
-	{
+    {
         if (profile != NULL && strcmp(profile->username, username) == 0) 
-		{
+        {
             displayUser(&user);
         } 
-		else 
-		{
+        else 
+        {
             printf("Full Name: %s\n", user.name);
             printf("Username: %s\n", user.username);
         }
 
         FILE *foodFile = fopen("foodLogs.txt", "r");
         FILE *recipeFile = fopen("Recipes.txt", "r");
-        int found = 0;
+        int foundFood = 0, foundRecipe = 0, count = 0;
 
         if (foodFile != NULL) 
-		{
-            printf("\nFOOD LOGS FOR %s\n", user.username);
+        {
+            printf("\n=============================================\n");
+            printf("|           FOOD LOGS FOR %s          |\n", user.username);
+            printf("=============================================\n");
+            
             foodLog log;
-            char fileUsername[MAX_USERNAME_LENGTH];
+            count = 0;
 
-            while (fscanf(foodFile, "%50[^\n]\n%c\n%d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
-                    log.name, &log.type, &log.timesEaten, log.ftDate, log.ftPlace, log.desc) == 6) 
-			{
+            while (fscanf(foodFile, "%50[^\n]\n%50s %[^\n]\n%c %d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
+                          log.name, log.username, log.fullname, &log.type, &log.timesEaten,
+                          log.ftDate, log.ftPlace, log.desc) == 8) 
+            {
+                if (strcmp(log.username, username) == 0) 
+                {
+                    printf("| Food Log #%d                                |\n", ++count);
+                    printf("=============================================\n");
                     displayFoodLog(&log);
-                    found = 1;
+                    printf("=============================================\n\n");
+                    foundFood = 1;
+                }
             }
             fclose(foodFile);
+
+            if (!foundFood)
+            {
+                printf("| No food logs found for %s.                 |\n", user.username);
+                printf("=============================================\n");
+            }
         }
 
         if (recipeFile != NULL) 
-		{
-            printf("\nRECIPES FOR %s\n", user.username);
+        {
+             printf("\n=============================================\n");
+            printf("|           RECIPES FOR %s             |\n", user.username);
+            printf("=============================================\n");
+
             Recipe recipe;
-            char recipeUsername[MAX_USERNAME_LENGTH];
             int i;
+            count = 0;
 
-            while (fscanf(recipeFile, "%50[^\n]\n%160[^\n]\n%d\n%d\n%d\n",
-                recipe.name, recipe.desc, &recipe.prepTime, &recipe.cookTime, &recipe.numIng) == 5) 
-			{
+            while (fscanf(recipeFile, "%50[^\n]\n%50s %[^\n]\n%160[^\n]\n%d %d\n%d\n",
+                          recipe.name, recipe.username, recipe.fullname, recipe.desc, 
+                          &recipe.prepTime, &recipe.cookTime, &recipe.numIng) == 7) 
+            {        
+                if (strcmp(recipe.username, user.username) == 0)
+                {
+                    printf("| Recipe #%d                                 |\n", ++count);
+                    printf("=============================================\n");
 
-                for (i = 0; i < recipe.numIng; i++) 
-				{
-                    fscanf(recipeFile, "%80[^\n]\n", recipe.ingredients[i]);
-                }
+                    for (i = 0; i < recipe.numIng; i++) 
+                    {
+                        fscanf(recipeFile, "%80[^\n]\n", recipe.ingredients[i]);
+                    }
 
-                fscanf(recipeFile, "%d\n", &recipe.numInstructions);
+                    fscanf(recipeFile, "%d\n", &recipe.numInstructions);
 
-                for (i = 0; i < recipe.numInstructions; i++) 
-				{
-                    fscanf(recipeFile, "%100[^\n]\n", recipe.instructions[i]);
-                }
+                    for (i = 0; i < recipe.numInstructions; i++) 
+                    {
+                        fscanf(recipeFile, "%100[^\n]\n", recipe.instructions[i]);
+                    }
 
                     displayRecipe(&recipe);
-                    found = 1;
+                    foundRecipe = 1;
+                }
             }
             fclose(recipeFile);
+
+            if (!foundRecipe)
+            {
+                printf("| No recipes found for %s.                   |\n", user.username);
+                printf("=============================================\n");
+            }
         }
 
-        if (!found) 
-		{
-            printf("No entries found for %s.\n", user.username);
+        if (!foundFood && !foundRecipe) 
+        {
+            printf("\n=============================================\n");
+            printf("| No food logs or recipes found for %s. |\n", user.username);
+            printf("=============================================\n");
         }
 
         system("pause");
     } 
-	else 
-	{
-        printf("User '%s' not found.\n", username);
+    else 
+    {
+        printf("=============================================\n");
+        printf("| User '%s' not found.                      |\n", username);
+        printf("=============================================\n");
         system("pause");
     }
     clearInputBuffer();
@@ -1691,8 +1818,9 @@ void searchFoodLog()
 
     foodLog log;
     
-    while (fscanf(foodFile, "%50[^\n]\n%c\n%d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
-            log.name, &log.type, &log.timesEaten, log.ftDate, log.ftPlace, log.desc) == 6) 
+    while (fscanf(foodFile, "%50[^\n]\n%50s %[^\n]\n%c %d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
+                  log.name, log.username, log.fullname, &log.type, &log.timesEaten,
+                  log.ftDate, log.ftPlace, log.desc) == 8) 
 	{
         if (strcmp(log.name, searchName) == 0) 
 		{
