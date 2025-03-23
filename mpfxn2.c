@@ -2,43 +2,61 @@
 #include <string.h>
 #include <windows.h>
 
+//Constants
+#define MAX_USERNAME 50
+#define MIN_USERNAME 8
+#define MAX_PASSWORD 20
+#define MIN_PASSWORD 8
+#define MAX_FULLNAME 80
+#define MIN_FULLNAME 5
+#define MAX_EMAIL 30
+#define MOBILE_LENGTH 11
+#define MAX_FOODNAME 50
+#define MIN_FOODNAME 3
+#define MAX_LOCATION 30
+#define MAX_DESC 300
+#define MAX_RECIPE_DESC 160
+#define MAX_INGREDIENT 80
+#define MAX_INSTRUCTION 100
 #define MAX_INGREDIENTS 20
 #define MAX_INSTRUCTIONS 20
-#define MAX_USERNAME_LENGTH 51
+#define MAX_FOODLOGS 50
+#define MAX_RECIPES 20
+#define MAX_FILENAME 30
+#define MAX_INGREDIENTS 20
+#define MAX_INSTRUCTIONS 20
 #define MAX_FILENAME 30
 
-/* FOOD LOG STRUCT */
+//Structs
 typedef struct 
 {
-    char name[51];
+    char name[MAX_FOODNAME + 1];
     char type;
     int timesEaten;
     char ftDate[11];
-    char ftPlace[31];
-    char desc[301];    
+    char ftPlace[MAX_LOCATION + 1];
+    char desc[MAX_DESC + 1];    
 } foodLog;
 
-/* RECIPE STRUCT */
 typedef struct 
 {
-    char name[51];
-    char desc[161];
+    char name[MAX_FOODNAME + 1];
+    char desc[MAX_RECIPE_DESC + 1];
     int prepTime;
     int cookTime;
     int numIng;
-    char ingredients[MAX_INGREDIENTS][81];
+    char ingredients[MAX_INGREDIENTS][MAX_INGREDIENT + 1];
     int numInstructions;
-    char instructions[MAX_INSTRUCTIONS][101];
+    char instructions[MAX_INSTRUCTIONS][MAX_INSTRUCTION + 1];
 } Recipe;
 
-/* USER STRUCT */
 typedef struct
 {
-    char username[51];
-    char pass[21];
-    char name[81];
-    char email[31];
-    char number[12];
+    char username[MAX_USERNAME + 1];
+    char pass[MAX_PASSWORD + 1];
+    char name[MAX_FULLNAME + 1];
+    char email[MAX_EMAIL + 1];
+    char number[MOBILE_LENGTH + 1];
 } User;
 
 //Divider
@@ -1588,7 +1606,7 @@ int findUser(const char *username, User *foundUser)
 
 void displayAllByUsername(User *profile) 
 {
-    char username[MAX_USERNAME_LENGTH];
+    char username[MAX_USERNAME];
     User user;
 
     printf("Enter username to search: ");
@@ -1615,7 +1633,7 @@ void displayAllByUsername(User *profile)
 		{
             printf("\nFOOD LOGS FOR %s\n", user.username);
             foodLog log;
-            char fileUsername[MAX_USERNAME_LENGTH];
+            char fileUsername[MAX_USERNAME];
 
             while (fscanf(foodFile, "%50[^\n]\n%c\n%d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
                     log.name, &log.type, &log.timesEaten, log.ftDate, log.ftPlace, log.desc) == 6) 
@@ -1630,7 +1648,7 @@ void displayAllByUsername(User *profile)
 		{
             printf("\nRECIPES FOR %s\n", user.username);
             Recipe recipe;
-            char recipeUsername[MAX_USERNAME_LENGTH];
+            char recipeUsername[MAX_USERNAME];
             int i;
 
             while (fscanf(recipeFile, "%50[^\n]\n%160[^\n]\n%d\n%d\n%d\n",
