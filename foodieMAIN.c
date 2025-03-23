@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "mpfxn2.c"
+#include "foodieFXN.c"
 
 int main() 
 {
