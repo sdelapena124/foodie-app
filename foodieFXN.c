@@ -59,21 +59,21 @@ typedef struct
     char number[MOBILE_LENGTH + 1];
 } User;
 
-//Divider
+/*  Utility Functions */
+
+//Function displays divider
 void displayDivider ()
 {
-	printf("\n\n====================================\n");
+	printf("====================================\n");
 }
 
-/* func to check if string is alphanumeric*/
+//Function checks if string is alphanumeric
 int
 isAlphanumeric(char *str)
 {
-    int i;
-    int num; //number of non alphanumeric char
     int len = strlen(str);
 
-    for(i = 0; i < len; i++)
+    for(int i = 0; i < len; i++)
     {
         if (!((str[i] >= 'A' && str[i] <= 'Z') ||
               (str[i] >= 'a' && str[i] <= 'z') ||
@@ -90,14 +90,13 @@ isAlphanumeric(char *str)
 int
 isAlphabetic(char *str)
 {
-    int i;
     int len = strlen(str);
 
-    for(i = 0; i < len; i++)
+    for(int i = 0; i < len; i++)
     {
         if (!((str[i] >= 'A' && str[i] <= 'Z') ||
-              (str[i] >= 'a' && str[i] <= 'z'))
-			  && (str[i] != ' ')) 
+              (str[i] >= 'a' && str[i] <= 'z')) && 
+              (str[i] != ' ')) 
         {
             return 0;
         }
@@ -132,14 +131,10 @@ withinBounds(char *str, int lowerLimit, int upperLimit)
 int
 verifyPass(char *str)
 {
-    int i;
-    int lower = 0;
-	int upper = 0;
-	int special = 0; 
-	int num = 0;
+    int lower = 0, upper = 0, special = 0, num = 0;
     int len = strlen(str);
 
-    for(i = 0; i < len; i++)
+    for(int i = 0; i < len; i++)
     {
         if (str[i] >= 'A' && str[i] <= 'Z')
         {
@@ -172,9 +167,7 @@ verifyPass(char *str)
 int
 verifyNumber(char *str)
 {
-    int i;
-    
-    if (strlen(str) != 11)
+     if (strlen(str) != 11)
     {
     	return 0;
 	}
@@ -184,7 +177,7 @@ verifyNumber(char *str)
         return 2; 
     }
 
-    for (i = 1; i < 11; i++)
+    for (int i = 1; i < 11; i++)
     {
 		if (str[i] < '0' || str[i] > '9')
         {
@@ -655,7 +648,8 @@ void addFoodLog()
             return;
         }
 
-        FILE *file = fopen("foodLogs.txt", "a");
+        FILE *file = fopen("foodLogs.txt", "a+");
+
         if (file == NULL)
         {
             printf("Error opening food logs file.\n");
@@ -881,7 +875,8 @@ void addRecipe()
             return;
         }
 
-        FILE *file = fopen("Recipes.txt", "a");
+        FILE *file = fopen("Recipes.txt", "a+");
+
         if (file == NULL)
         {
             printf("Error opening recipes file.\n");
