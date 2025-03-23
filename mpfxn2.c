@@ -308,6 +308,7 @@ verifyProfile()
     User p;
     char passwordConfirm[21];
     FILE *userFile = fopen("profiles.dat", "r");
+    int validPassword = 0;
 
     do
     {
@@ -324,8 +325,20 @@ verifyProfile()
     // Password input
     do
     {
-        printf("Enter Password: ");
-        scanf("%20s", p.pass);
+    	do 
+		{
+	        printf("Enter Password: ");
+	        scanf("%20s", p.pass);
+	        
+	        if (verifyPass(p.pass) && withinBounds(p.pass, 8, 20))
+	        {
+	            validPassword = 1;
+	        }
+	        else
+	        {
+	            printf("Password must be 8-20 characters and include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character (!, @, #, $, %, &, *, .).\n");
+	        }
+    	} while (!validPassword);
 
         printf("Confirm Password: ");
         scanf("%20s", passwordConfirm);
@@ -333,10 +346,6 @@ verifyProfile()
         if (strcmp(p.pass, passwordConfirm) != 0)
         {
             printf("Passwords do not match. Try again.\n");
-        }
-        else if (!(verifyPass(p.pass) && withinBounds(p.pass, 8, 20)))
-        {
-            printf("Password must be 8-20 characters and include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character (!, @, #, $, %, &, *, .).\n");
         }
 
     } while (strcmp(p.pass, passwordConfirm) != 0 || !(verifyPass(p.pass) && withinBounds(p.pass, 8, 20)));
@@ -892,37 +901,40 @@ void addRecipe()
 int displayMenu ()
 {
 	int choice;
+	int validInput;
 	
-	system("cls");
+	do
+	{
+		system("cls");
+		
+	    printf("Foodie App Menu\n");
+	    printf("[1] Add Food Log\n");
+	    printf("[2] Add Recipe\n");
+	    printf("[3] Modify Food Log\n");
+	    printf("[4] Modify Recipe\n");
+	    printf("[5] Delete Food Log\n");
+	    printf("[6] Delete Recipe\n");
+	    printf("[7] Display User\n");
+	    printf("[8] Display All Food Log and Recipe by Username\n");
+	    printf("[9] Display All Food Log\n");
+	    printf("[10] Display All Recipe\n");
+	    printf("[11] Search Food Log\n");
+	    printf("[12] Search Recipe\n");
+	    printf("[13] Export Data\n");
+	    printf("[14] Import Data\n");
+	    printf("[15] Exit\n");
+	    printf("Enter your choice: ");
+	    scanf("%d", &choice);
+	    
+	    validInput = scanf("%d", &choice);
 	
-    printf("Foodie App Menu\n");
-    printf("[1] Add Food Log\n");
-    printf("[2] Add Recipe\n");
-    printf("[3] Modify Food Log\n");
-    printf("[4] Modify Recipe\n");
-    printf("[5] Delete Food Log\n");
-    printf("[6] Delete Recipe\n");
-    printf("[7] Display User\n");
-    printf("[8] Display All Food Log and Recipe by Username\n");
-    printf("[9] Display All Food Log\n");
-    printf("[10] Display All Recipe\n");
-    printf("[11] Search Food Log\n");
-    printf("[12] Search Recipe\n");
-    printf("[13] Export Data\n");
-    printf("[14] Import Data\n");
-    printf("[15] Exit\n");
-    printf("Enter your choice: ");
-    scanf("%d", &choice);
-    
-    validInput = scanf("%d", &choice);
-
-    if (validInput != 1 || choice < 1 || choice > 15)
-    {
-        printf("Invalid input. Please enter a number between 1 and 15.\n");
-
-        while (getchar() != '\n');
-		system("pause");
-    }
+	    if (validInput != 1 || choice < 1 || choice > 15)
+	    {
+	        printf("Invalid input. Please enter a number between 1 and 15.\n");
+	
+	        while (getchar() != '\n');
+			system("pause");
+	    }
 
     } while (validInput != 1 || choice < 1 || choice > 15);
 

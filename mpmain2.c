@@ -130,10 +130,6 @@ int main()
                 }
             } while (choice != 15 && loginSuccessful);
         } 
-//		else 
-//		{
-//            printf("Program terminated due to failed login.\n");
-//        }
     }
     return 0;
 }
