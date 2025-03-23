@@ -924,7 +924,6 @@ int displayMenu ()
 	    printf("[14] Import Data\n");
 	    printf("[15] Exit\n");
 	    printf("Enter your choice: ");
-	    scanf("%d", &choice);
 	    
 	    validInput = scanf("%d", &choice);
 	
