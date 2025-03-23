@@ -38,7 +38,6 @@ int main()
         
         else
         {
-
 	        if (nOption == 1) 
 			{
 	            FILE *userFile = fopen("profiles.dat", "r");
