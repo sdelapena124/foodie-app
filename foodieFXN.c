@@ -332,9 +332,9 @@ verifyProfile()
     int validPassword = 0;
 
     //Added UI
-    printf("==============================================\n");
-    printf("|                REGISTRATION                |\n");
-    printf("==============================================\n");
+    printf("========================================================================\n");
+    printf("|                             REGISTRATION                             |\n");
+    printf("========================================================================\n");
 
     while (!(isAlphanumeric(p.username)) || !(isWithinBounds(p.username, 8, 50)))
     {
