@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>
+#include <stdbool.h>
 
 #define MAX_INGREDIENTS 20
 #define MAX_INSTRUCTIONS 20
@@ -101,7 +102,7 @@ void clearInputBuffer() {
 
 /* func to check if string is in bounds */
 int
-withinBounds(char *str, int lowerLimit, int upperLimit)
+isWithinBounds(char *str, int lowerLimit, int upperLimit)
 {
     int len = strlen(str);
 
@@ -338,7 +339,7 @@ verifyProfile()
 	        printf("Enter Password: ");
 	        scanf("%20s", p.pass);
 	        
-	        if (verifyPass(p.pass) && withinBounds(p.pass, 8, 20))
+	        if (verifyPass(p.pass) && isWithinBounds(p.pass, 8, 20))
 	        {
 	            validPassword = 1;
 	        }
@@ -356,7 +357,7 @@ verifyProfile()
             printf("Passwords do not match. Try again.\n");
         }
 
-    } while (strcmp(p.pass, passwordConfirm) != 0 || !(verifyPass(p.pass) && withinBounds(p.pass, 8, 20)));
+    } while (strcmp(p.pass, passwordConfirm) != 0 || !(verifyPass(p.pass) && isWithinBounds(p.pass, 8, 20)));
 
     // Full Name input
     do
@@ -364,12 +365,12 @@ verifyProfile()
         printf("Enter full name: ");
         scanf(" %[^\n]s", p.name);
 
-        if (!(isAlphabetic(p.name) && withinBounds(p.name, 5, 80)))
+        if (!(isAlphabetic(p.name) && isWithinBounds(p.name, 5, 80)))
         {
             printf("Full name must be 5-80 alphabetic characters.\n");
         }
 
-    } while (!(isAlphabetic(p.name) && withinBounds(p.name, 5, 80)));
+    } while (!(isAlphabetic(p.name) && isWithinBounds(p.name, 5, 80)));
 
     // Email input
     do
@@ -489,7 +490,7 @@ int verifyFood(foodLog *f)
         printf("Enter Food Name: ");
         scanf(" %[^\n]s", f->name);
 
-        if (isAlphanumeric(f->name) == 1 && withinBounds(f->name, 3, 50))
+        if (isAlphanumeric(f->name) == 1 && isWithinBounds(f->name, 3, 50))
         {
             success = 1;
         }
@@ -682,7 +683,7 @@ int verifyRecipe(Recipe *r)
         scanf(" %[^\n]s", r->name);
         
 
-        if (isAlphanumeric(r->name) == 1 && withinBounds(r->name, 3, 50))
+        if (isAlphanumeric(r->name) == 1 && isWithinBounds(r->name, 3, 50))
         {
             success = 1;
         }
