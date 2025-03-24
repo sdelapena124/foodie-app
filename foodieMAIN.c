@@ -71,8 +71,7 @@ int main()
                 return 0;
 
             default:
-                printf("Invalid choice. Please try again.\n");
-                system("pause");
+                break;
         }
 		
         if (loginSuccessful) 
