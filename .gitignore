@@ -1,10 +1,5 @@
-# everything after a # will not be included
-#file is for ignoring certain files when pushing to origin
-
-#ignore all exe files
-*exe
-
-#ignore files
-foodLogs.txt
+*.exe
 profiles.dat
-
+foodLogs.txt
+Recipes.txt
+temp.txt

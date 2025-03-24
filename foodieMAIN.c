@@ -16,14 +16,14 @@ int main()
     
     while (1) 
 	{
-		printf("\t\t----------------------------------------------------------------------------\n");
-    	printf("\t\t|                                                                          |\n");
-    	printf("\t\t|                              [1] Login               	                   |\n");
-    	printf("\t\t|                              [2] Register           	                   |\n");
-    	printf("\t\t|                              [3] Exit               	                   |\n");
-    	printf("\t\t|                                                                          |\n");
-    	printf("\t\t----------------------------------------------------------------------------\n");
-        printf("\t\t\tEnter option number: ");
+		printf("=============================================\n");
+        printf("|            WELCOME TO FOODIE APP          |\n");
+        printf("=============================================\n");
+        printf("| [1] + Login                               |\n");
+        printf("| [2] + Register                            |\n");
+        printf("| [3] + Exit                                |\n");
+        printf("=============================================\n");
+        printf("Enter option number: ");
         
         if (scanf("%d", &nOption) != 1) 
         {
@@ -38,6 +38,7 @@ int main()
         
         else
         {
+
 	        if (nOption == 1) 
 			{
 	            FILE *userFile = fopen("profiles.dat", "r");
@@ -48,16 +49,16 @@ int main()
 	            } 
 				else 
 				{
-	                printf("\n\t\tNo user profile found. Please register first.\n");
+	                printf("\nNo user profile found. Please register first.\n");
 	            	system("pause");
 	            	system("cls");
 	            }
 	        } 
 			else if (nOption == 2) 
 			{
-                system("cls");
 	            profile = verifyProfile();
 	            system("pause");
+	            system("cls");
 	        } 
 			else if (nOption == 3) 
 			{
@@ -66,7 +67,7 @@ int main()
 	        } 
 			else 
 			{
-	            printf("Invalid choice. Please try again.\n\t\t");
+	            printf("Invalid choice. Please try again.\n");
 	            system("pause");
 	            system("cls");
 	        }
@@ -83,39 +84,51 @@ int main()
                 switch (choice) 
 				{
                     case 1:
-                        addFoodLog();
+                    	system("cls");
+                        addFoodLog(&profile);
                         break;
                     case 2:
-                        addRecipe();
+                    	system("cls");
+                        addRecipe(&profile);
                         break;
                     case 3:
-                        modifyFoodLog();
+                    	system("cls");
+                        modifyFoodLog(&profile);
                         break;
                     case 4:
-                        modifyRecipe();
+                    	system("cls");
+                        modifyRecipe(&profile);
                         break;
                     case 5:
-                        deleteFoodLog();
+                    	system("cls");
+                        deleteFoodLog(&profile);
                         break;
                     case 6:
-                        deleteRecipe();
+                    	system("cls");
+                        deleteRecipe(&profile);
                         break;
                     case 7:
+                    	system("cls");
                         displayUser(&profile);
                         break;
                     case 8:
+                    	system("cls");
                         displayAllByUsername(&profile);
                         break;
                     case 9:
+                    	system("cls");
                         displayAllFoodLogs();
                         break;
                     case 10:
+                    	system("cls");
                         displayAllRecipes();
                         break;
                     case 11:
+                    	system("cls");
                         searchFoodLog();
                         break;
                     case 12:
+                    	system("cls");
                         searchRecipe();
                         break;
                     case 13:
