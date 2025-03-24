@@ -313,7 +313,8 @@ verifyProfile()
     char passwordConfirm[21];
     FILE *userFile = fopen("profiles.dat", "r");
     int validPassword = 0;
-
+    
+    system("cls");
     printf("==============================================\n");
     printf("|                REGISTRATION                |\n");
     printf("==============================================\n");
@@ -432,17 +433,30 @@ verifyUser(User *p)
     FILE *userFile = fopen("profiles.dat", "r");
     if (userFile == NULL)
     {
-        printf("No user profiles found. Please register first.\n");
+        printf("\n============================================\n");
+        printf("|          NO USER PROFILES FOUND            |\n");
+        printf("|          Please register first.            |\n");
+        printf("==============================================\n\n");
         return 0;
     }
 
     while (attempts < 3 && !success)
     {
-        printf("Enter username: ");
-        scanf("%50s", inputUser);
+	if (attempts == 0)
+	{
+		system("cls");
+	}	
+        printf("==============================================\n");
+        printf("|                  LOGIN                     |\n");
+        printf("==============================================\n");
 
-        printf("Enter password: ");
+        printf("| Username: ");
+        scanf("%50s", inputUser);
+        clearInputBuffer();
+
+        printf("| Password: ");
         scanf("%20s", inputPass);
+        clearInputBuffer();
 
         rewind(userFile); // Reset file position
 
@@ -450,7 +464,9 @@ verifyUser(User *p)
         {
             if (strcmp(storedUser, inputUser) == 0 && strcmp(storedPass, inputPass) == 0)
             {
-                printf("\n\nWELCOME %s!\n", storedUser);
+                printf("==============================================\n");
+                printf("               WELCOME, %s!                 \n", storedUser);
+                printf("==============================================\n\n");
                 strcpy(p->username, storedUser);
                 strcpy(p->pass, storedPass);
                 strcpy(p->name, storedName);
@@ -464,7 +480,10 @@ verifyUser(User *p)
         if (!success)
         {
             attempts++;
-            printf("Incorrect username and/or password! Attempt %d / 3\n\n", attempts);
+            printf("\n==============================================\n");
+            printf("|     Incorrect username and/or password!    |\n");
+            printf("|       Attempt %d / 3                        |\n", attempts);
+            printf("==============================================\n\n");
         }
     }
 
@@ -472,7 +491,10 @@ verifyUser(User *p)
 
     if (!success)
     {
-        printf("\n\nNumber of attempts reached. Press any key to exit!\n\n");
+        printf("==============================================\n");
+        printf("|    MAXIMUM ATTEMPTS REACHED                |\n");
+        printf("|    Please try again later.                 |\n");
+        printf("==============================================\n");
     }
 
     return success;

@@ -16,6 +16,7 @@ int main()
     
     while (1) 
 	{
+		system("cls");
 		printf("=============================================\n");
         printf("|            WELCOME TO FOODIE APP          |\n");
         printf("=============================================\n");
@@ -36,43 +37,43 @@ int main()
             system("cls");
         }
         
-        else
+        switch (nOption) 
         {
+            case 1:
+                {
+                    FILE *userFile = fopen("profiles.dat", "r");
+                    if (userFile != NULL) 
+                    {
+                        fclose(userFile);
+                        loginSuccessful = verifyUser(&profile);
 
-	        if (nOption == 1) 
-			{
-	            FILE *userFile = fopen("profiles.dat", "r");
-	            if (userFile != NULL) 
-				{
-	                fclose(userFile);
-	                loginSuccessful = verifyUser(&profile);
-	            } 
-				else 
-				{
-	                printf("\nNo user profile found. Please register first.\n");
-	            	system("pause");
-	            	system("cls");
-	            }
-	        } 
-			else if (nOption == 2) 
-			{
-                system("cls");
-	            profile = verifyProfile();
-	            system("pause");
-	            system("cls");
-	        } 
-			else if (nOption == 3) 
-			{
-	            printf("Exiting program...\n");
-	            return 0;
-	        } 
-			else 
-			{
-	            printf("Invalid choice. Please try again.\n");
-	            system("pause");
-	            system("cls");
-	        }
-		}
+                        if (!loginSuccessful) 
+                        {
+                            while (getchar() != '\n');
+                            return 0;
+                        }
+                    } 
+                    else 
+                    {
+                        printf("\nNo user profile found. Please register first.\n");
+                        system("pause");
+                    }
+                }
+                break;
+
+            case 2:
+                profile = verifyProfile();
+                system("pause");
+                break;
+
+            case 3:
+                printf("Exiting program...\n");
+                return 0;
+
+            default:
+                printf("Invalid choice. Please try again.\n");
+                system("pause");
+        }
 		
         if (loginSuccessful) 
 		{
@@ -143,7 +144,8 @@ int main()
                         printf("Invalid choice. Please try again.\n");
                 }
             } while (choice != 15 && loginSuccessful);
-        } 
+        }
+        loginSuccessful = 0;
     }
     return 0;
 }
