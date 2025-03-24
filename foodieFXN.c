@@ -53,7 +53,7 @@ void displayDivider ()
 }
 
 /* func to check if string is alphanumeric*/
-int
+bool
 isAlphanumeric(char *str)
 {
     int i;
@@ -74,7 +74,7 @@ isAlphanumeric(char *str)
 }
 
 /* func to check if string is alphabetic */
-int
+bool
 isAlphabetic(char *str)
 {
     int i;
@@ -89,19 +89,19 @@ isAlphabetic(char *str)
             return 0;
         }
     }
-
     return 1;
-
 }
 
 //for clearing input buffer for scanf
-void clearInputBuffer() {
+void 
+clearInputBuffer() 
+{
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
 /* func to check if string is in bounds */
-int
+bool
 isWithinBounds(char *str, int lowerLimit, int upperLimit)
 {
     int len = strlen(str);
@@ -310,7 +310,7 @@ int isValidDate (char *str)
 User
 verifyProfile()
 {
-    User p;
+    User p = {0};
     char passwordConfirm[21];
     FILE *userFile = fopen("profiles.dat", "r");
     int validPassword = 0;
@@ -319,17 +319,17 @@ verifyProfile()
     printf("|                REGISTRATION                |\n");
     printf("==============================================\n");
 
-    do
+    while (!(isAlphanumeric(p.username)) || isWithinBounds(p.username, 8, 50) == 0)
     {
         printf("Enter Username: ");
         scanf("%50s", p.username);
+        clearInputBuffer();
 
-        if (!(isAlphanumeric(p.username) && strlen(p.username) >= 8 && strlen(p.username) <= 50))
+        if (!(isAlphanumeric(p.username)) || !isWithinBounds(p.username, 8, 50))
         {
             printf("Username must contain 8-50 alphanumeric characters!\n");
         }
-
-    } while (!(isAlphanumeric(p.username) && strlen(p.username) >= 8 && strlen(p.username) <= 50));
+    }
 
     // Password input
     do
