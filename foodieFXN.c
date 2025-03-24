@@ -48,7 +48,7 @@ typedef struct
 //Divider
 void displayDivider ()
 {
-	printf("\n\n=============================================\n");
+	printf("=============================================\n");
 }
 
 /* func to check if string is alphanumeric*/
@@ -315,7 +315,7 @@ verifyProfile()
     int validPassword = 0;
 
     displayDivider();
-    printf("|\t\tREGISTRATION\t\t|");
+    printf("|                REGISTRATION               |");
     displayDivider();
 
     do

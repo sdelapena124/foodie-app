@@ -56,6 +56,7 @@ int main()
 	        } 
 			else if (nOption == 2) 
 			{
+                system("cls");
 	            profile = verifyProfile();
 	            system("pause");
 	            system("cls");
