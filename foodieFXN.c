@@ -315,7 +315,7 @@ verifyProfile()
     int validPassword = 0;
 
     printf("==============================================\n");
-    printf("|                REGISTRATION                |");
+    printf("|                REGISTRATION                |\n");
     printf("==============================================\n");
 
     do
