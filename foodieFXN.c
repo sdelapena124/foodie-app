@@ -377,17 +377,17 @@ verifyProfile()
     } while (strcmp(p.pass, passwordConfirm) != 0 || !(verifyPass(p.pass) && isWithinBounds(p.pass, 8, 20)));
 
     // Full Name input
-    do
+    while (!(isAlphabetic(p.name)) || !(isWithinBounds(p.name, 5, 80)))
     {
         printf("Enter full name: ");
         scanf(" %[^\n]s", p.name);
 
-        if (!(isAlphabetic(p.name) && isWithinBounds(p.name, 5, 80)))
+        if (!(isAlphabetic(p.name)) || !(isWithinBounds(p.name, 5, 80)))
         {
             printf("Full name must be 5-80 alphabetic characters.\n");
         }
 
-    } while (!(isAlphabetic(p.name) && isWithinBounds(p.name, 5, 80)));
+    }
 
     // Email input
     do
