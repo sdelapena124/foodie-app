@@ -3,46 +3,62 @@
 #include <windows.h>
 #include <stdbool.h>
 
+#define MAX_USERNAME 50
+#define MIN_USERNAME 8
+#define MAX_PASSWORD 20
+#define MIN_PASSWORD 8
+#define MIN_FULLNAME 5
+#define MAX_FULLNAME 80
+#define MAX_EMAIL 30
+#define MAX_FOODNAME 50
+#define MIN_FOODNAME 3
+#define MAX_LOCATION_FT 30 //location first tried
+#define MAX_FOOD_DESC 300
+#define MAX_RECIPENAME 50
+#define MIN_RECIPENAME 3
+#define MAX_RECIPEDESC 160
 #define MAX_INGREDIENTS 20
+#define MAX_INGREDIENT 80
 #define MAX_INSTRUCTIONS 20
-#define MAX_USERNAME_LENGTH 51
+#define MAX_INSTRUCTION 100
+
 #define MAX_FILENAME 30
 
 /* FOOD LOG STRUCT */
 typedef struct 
 {
-    char name[51];
-    char username[51];
-    char fullname[81];
+    char name[MAX_FOODNAME + 1];
+    char username[MAX_USERNAME + 1];
+    char fullname[MAX_FULLNAME + 1];
     char type;
     int timesEaten;
-    char ftDate[11];
-    char ftPlace[31];
-    char desc[301];    
+    char dateFT[11];
+    char locationFT[MAX_LOCATION_FT + 1];
+    char desc[MAX_FOOD_DESC + 1];    
 } foodLog;
 
 /* RECIPE STRUCT */
 typedef struct 
 {
-    char name[51];
-    char username[51];
-    char fullname[81];
-    char desc[161];
+    char name[MAX_RECIPENAME + 1];
+    char username[MAX_USERNAME + 1];
+    char fullname[MAX_FULLNAME + 1];
+    char desc[MAX_RECIPEDESC + 1];
     int prepTime;
     int cookTime;
     int numIng;
-    char ingredients[MAX_INGREDIENTS][81];
+    char ingredients[MAX_INGREDIENTS][MAX_INGREDIENT + 1];
     int numInstructions;
-    char instructions[MAX_INSTRUCTIONS][101];
+    char instructions[MAX_INSTRUCTIONS][MAX_INSTRUCTION + 1];
 } Recipe;
 
 /* USER STRUCT */
 typedef struct
 {
-    char username[51];
-    char pass[21];
-    char name[81];
-    char email[31];
+    char username[MAX_USERNAME + 1];
+    char pass[MAX_PASSWORD + 1];
+    char name[MAX_FULLNAME + 1];
+    char email[MAX_EMAIL + 1];
     char number[12];
 } User;
 
@@ -310,22 +326,23 @@ int isValidDate (char *str)
 User
 verifyProfile()
 {
-    User p = {0};
+    User p = {0}; //Initialised to 0
     char passwordConfirm[21];
     FILE *userFile = fopen("profiles.dat", "r");
     int validPassword = 0;
 
+    //Added UI
     printf("==============================================\n");
     printf("|                REGISTRATION                |\n");
     printf("==============================================\n");
 
-    while (!(isAlphanumeric(p.username)) || isWithinBounds(p.username, 8, 50) == 0)
+    while (!(isAlphanumeric(p.username)) || !(isWithinBounds(p.username, 8, 50)))
     {
         printf("Enter Username: ");
         scanf("%50s", p.username);
         clearInputBuffer();
 
-        if (!(isAlphanumeric(p.username)) || !isWithinBounds(p.username, 8, 50))
+        if (!(isAlphanumeric(p.username)) || !(isWithinBounds(p.username, 8, 50)))
         {
             printf("Username must contain 8-50 alphanumeric characters!\n");
         }
@@ -543,17 +560,17 @@ int verifyFood(foodLog *f)
 	while (success == 0)
 	{
 		printf("Date First Tried (mm/dd/yyyy): ");
-        scanf("%10s", f->ftDate);
+        scanf("%10s", f->dateFT);
         
-        if (isValidDate(f->ftDate) == 0)
+        if (isValidDate(f->dateFT) == 0)
         {
         	printf("Date must be in mm/dd/yyyy format and must only contain digits.\n");
 		}
-		else if (isValidDate(f->ftDate) == 3)
+		else if (isValidDate(f->dateFT) == 3)
 		{
 			printf("Invalid date! Please try again.\n");
 		}
-		else if (isValidDate(f->ftDate) == 1)
+		else if (isValidDate(f->dateFT) == 1)
 		{
 			success = 1;
 		}
@@ -567,9 +584,9 @@ int verifyFood(foodLog *f)
 	while (success == 0)
 	{
 		printf("Location First Tried: ");
-        scanf(" %[^\n]s", f->ftPlace);	
+        scanf(" %[^\n]s", f->locationFT);	
 		
-		int placeLength = strlen(f->ftPlace);
+		int placeLength = strlen(f->locationFT);
 		
 		if (placeLength > 0 && placeLength <= 30)
 		{
@@ -619,7 +636,7 @@ int foodNameExists(const char *foodName)
     foodLog tempLog;
     while (fscanf(file, " %50s\n%c\n%d\n%10s\n%30s\n%300[^\n]\n",
                   tempLog.name, &tempLog.type, &tempLog.timesEaten,
-                  tempLog.ftDate, tempLog.ftPlace, tempLog.desc) == 6)
+                  tempLog.dateFT, tempLog.locationFT, tempLog.desc) == 6)
     {
         if (strcmp(tempLog.name, foodName) == 0)
         {
@@ -657,7 +674,7 @@ void addFoodLog(User *profile)
         fprintf(file, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
                 newLog.name, profile->username, profile->name, 
                 newLog.type, newLog.timesEaten,
-                newLog.ftDate, newLog.ftPlace, newLog.desc);
+                newLog.dateFT, newLog.locationFT, newLog.desc);
 
         fclose(file);
         printf("Food log added successfully!\n");
@@ -962,8 +979,8 @@ void displayFoodLog(const foodLog *log)
     printf("Food Name: %s\n", log->name);
     printf("Type: %c\n", log->type);
     printf("Times Eaten: %d\n", log->timesEaten);
-    printf("Date: %s\n", log->ftDate);
-    printf("Place: %s\n", log->ftPlace);
+    printf("Date: %s\n", log->dateFT);
+    printf("Place: %s\n", log->locationFT);
     printf("Description: %s\n", log->desc);
 }
 
@@ -1005,7 +1022,7 @@ void modifyFoodLog(User *profile)
     int found = 0;
     while (fscanf(file, "%50[^\n]\n%50s %[^\n]\n%c %d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
                   log.name, log.username, log.fullname, &log.type, &log.timesEaten,
-                  log.ftDate, log.ftPlace, log.desc) == 8) 
+                  log.dateFT, log.locationFT, log.desc) == 8) 
 	{
         if (strcmp(log.name, foodName) == 0) 
 		{
@@ -1025,13 +1042,13 @@ void modifyFoodLog(User *profile)
 
             if (confirm == 'y' || confirm == 'Y') {
                 fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
-                        tempLog.name, tempLog.username, tempLog.fullname, tempLog.type, tempLog.timesEaten, tempLog.ftDate, tempLog.ftPlace, tempLog.desc);
+                        tempLog.name, tempLog.username, tempLog.fullname, tempLog.type, tempLog.timesEaten, tempLog.dateFT, tempLog.locationFT, tempLog.desc);
                 printf("Food log modified successfully.\n");
             } 
 			else 
 			{
                 fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
-                        log.name, log.username, log.fullname, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
+                        log.name, log.username, log.fullname, log.type, log.timesEaten, log.dateFT, log.locationFT, log.desc);
                 printf("Modification cancelled.\n");
             }
 
@@ -1039,7 +1056,7 @@ void modifyFoodLog(User *profile)
 		else 
 		{
             fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
-                    log.name, log.username, log.fullname, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
+                    log.name, log.username, log.fullname, log.type, log.timesEaten, log.dateFT, log.locationFT, log.desc);
         }
     }
     fclose(file);
@@ -1255,7 +1272,7 @@ void deleteFoodLog(User *profile)
 
     while (fscanf(file, "%50[^\n]\n%50s %[^\n]\n%c %d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
                   log.name, log.username, log.fullname, &log.type, &log.timesEaten,
-                  log.ftDate, log.ftPlace, log.desc) == 8) 
+                  log.dateFT, log.locationFT, log.desc) == 8) 
 	{
         if (strcmp(log.name, foodName) == 0) 
 		{
@@ -1275,7 +1292,7 @@ void deleteFoodLog(User *profile)
 			{
                 fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
                             log.name, log.username, log.fullname, log.type, log.timesEaten, 
-                            log.ftDate, log.ftPlace, log.desc);
+                            log.dateFT, log.locationFT, log.desc);
                 printf("Deletion cancelled. Food log retained.\n");
             }
         }
@@ -1283,7 +1300,7 @@ void deleteFoodLog(User *profile)
 		{
             fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
                     log.name, log.username, log.fullname, log.type, log.timesEaten, 
-                    log.ftDate, log.ftPlace, log.desc);
+                    log.dateFT, log.locationFT, log.desc);
         }
     }
 
@@ -1510,7 +1527,7 @@ void displayAllFoodLogs()
     while (fscanf(foodFile, "%50[^\n]\n%50s %50[^\n]\n%c %d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
                   logs[logCount].name, logs[logCount].username, logs[logCount].fullname, 
                   &logs[logCount].type, &logs[logCount].timesEaten, 
-                  logs[logCount].ftDate, logs[logCount].ftPlace, logs[logCount].desc) == 8) 
+                  logs[logCount].dateFT, logs[logCount].locationFT, logs[logCount].desc) == 8) 
 	{
         logCount++;
     }
@@ -1523,7 +1540,7 @@ void displayAllFoodLogs()
 		{
             for (int j = 0; j < logCount - i - 1; j++) 
 			{
-                if (compareDates(logs[j].ftDate, logs[j + 1].ftDate) < 0)
+                if (compareDates(logs[j].dateFT, logs[j + 1].dateFT) < 0)
 				{
                     foodLog temp = logs[j];
                     logs[j] = logs[j + 1];
@@ -1546,8 +1563,8 @@ void displayAllFoodLogs()
             printf("| Full Name  : %-30s |\n", logs[i].fullname);
             printf("| Type       : %-30c |\n", logs[i].type);
             printf("| Times Eaten: %-30d |\n", logs[i].timesEaten);
-            printf("| First Tried: %-30s |\n", logs[i].ftDate);
-            printf("| Location   : %-30s |\n", logs[i].ftPlace);
+            printf("| First Tried: %-30s |\n", logs[i].dateFT);
+            printf("| Location   : %-30s |\n", logs[i].locationFT);
             printf("| Description: %-30s |\n", logs[i].desc);
             printf("=============================================\n");
         }
@@ -1682,7 +1699,7 @@ int findUser(const char *username, User *foundUser)
 
 void displayAllByUsername(User *profile) 
 {
-    char username[MAX_USERNAME_LENGTH];
+    char username[MAX_USERNAME + 1];
     User user;
 
     printf("=============================================\n");
@@ -1719,7 +1736,7 @@ void displayAllByUsername(User *profile)
 
             while (fscanf(foodFile, "%50[^\n]\n%50s %[^\n]\n%c %d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
                           log.name, log.username, log.fullname, &log.type, &log.timesEaten,
-                          log.ftDate, log.ftPlace, log.desc) == 8) 
+                          log.dateFT, log.locationFT, log.desc) == 8) 
             {
                 if (strcmp(log.username, username) == 0) 
                 {
@@ -1825,7 +1842,7 @@ void searchFoodLog()
     
     while (fscanf(foodFile, "%50[^\n]\n%50s %[^\n]\n%c %d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
                   log.name, log.username, log.fullname, &log.type, &log.timesEaten,
-                  log.ftDate, log.ftPlace, log.desc) == 8) 
+                  log.dateFT, log.locationFT, log.desc) == 8) 
 	{
         if (strcmp(log.name, searchName) == 0) 
 		{
