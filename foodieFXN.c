@@ -45,13 +45,21 @@ typedef struct
     char number[12];
 } User;
 
-//Divider
-void displayDivider ()
+/* clearInputBuffer clears any remaining characters in the input buffer.
+
+*/
+void clearInputBuffer() 
 {
-	printf("\n\n=============================================\n");
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
 }
 
-/* func to check if string is alphanumeric*/
+/* isAlphanumeric checks if a given string contains only alphanumeric characters.
+   @param str - pointer to the string to be checked.
+   @return 1 if the string contains only letters (A-Z, a-z) and digits (0-9).
+   @return 0 if the string contains any non-alphanumeric character.
+   Pre-condition: str is a valid null-terminated string.
+*/
 int
 isAlphanumeric(char *str)
 {
@@ -72,7 +80,13 @@ isAlphanumeric(char *str)
     return 1;
 }
 
-/* func to check if string is alphabetic */
+
+/* isAlphabetic checks if a given string contains only alphabetic characters and spaces.
+   @param str - pointer to the string to be checked.
+   @return 1 if the string contains only letters (A-Z, a-z) and spaces.
+   @return 0 if the string contains any non-alphabetic character other than spaces.
+   Pre-condition: str is a valid null-terminated string.
+*/
 int
 isAlphabetic(char *str)
 {
@@ -90,16 +104,17 @@ isAlphabetic(char *str)
     }
 
     return 1;
-
 }
 
-//for clearing input buffer for scanf
-void clearInputBuffer() {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
-}
 
-/* func to check if string is in bounds */
+
+/* withinBounds checks if the length of a given string falls within a specified range.
+	@param str - pointer to the input string
+	@param lowerLimit - minimum allowable length (inclusive)
+	@param upperLimit - maximum allowable length (inclusive)
+	@return 1 if the string length is within bounds, 0 otherwise
+	Pre-condition: str is a valid null-terminated string.
+*/
 int
 withinBounds(char *str, int lowerLimit, int upperLimit)
 {
@@ -114,7 +129,15 @@ withinBounds(char *str, int lowerLimit, int upperLimit)
 }
 
 
-/* func to check if password is valid */
+/* verifyPass checks if a given password meets the required criteria: 
+   it must contain at least one uppercase letter, one lowercase letter, 
+   one numeric digit, and one special character from the allowed set (!, @, $, %, &, *, .).
+   
+   @param str - pointer to the input password string
+   @return 1 if the password meets all criteria, 0 otherwise
+   Pre-condition: str is a valid null-terminated string.
+*/
+
 int
 verifyPass(char *str)
 {
@@ -154,7 +177,14 @@ verifyPass(char *str)
     return (special && lower && upper && num);
 }
 
-/* func to check phone number*/
+/* verifyNumber checks if a given string represents a valid 11-digit mobile number.
+   
+   @param str - pointer to the input string representing the mobile number
+   @return 1 if the number is valid (exactly 11 digits, starts with '0', and contains only digits)
+   @return 0 if the number is invalid (not 11 characters long or contains non-numeric characters)
+   @return 2 if the number does not start with '0'
+   Pre-condition: str is a valid null-terminated string.
+*/
 int
 verifyNumber(char *str)
 {
@@ -181,6 +211,16 @@ verifyNumber(char *str)
     return 1;
 }
 
+
+/* verifyEmail checks if a given string is a valid email address.
+
+   @param str - pointer to the input string representing the email address
+   @return 1 if the email is valid (contains exactly one '@', has a '.' after '@', and follows proper format)
+   @return 0 if the email is invalid (missing '@' or '.', misplaced characters, or incorrect format)
+   @return 2 if the email exceeds the maximum length of 30 characters
+   @return 3 if the input string is empty
+   Pre-condition: str is a valid null-terminated string.
+*/
 int verifyEmail (char *str)
 {
 	int length;
@@ -232,12 +272,31 @@ int verifyEmail (char *str)
     return 1;  
 }
 
+/* isLeapYear checks whether a given year is a leap year.
+
+   @param year - the year to check
+   @return 1 if the year is a leap year (divisible by 4 and either not divisible by 100 or divisible by 400)
+   @return 0 if the year is not a leap year
+   Pre-condition: year is a positive integer.
+*/
 int isLeapYear(int year) 
 {
     // Leap year: divisible by 4 AND (not divisible by 100 OR divisible by 400)
     return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
 }
 
+/* isValidDate checks if a given date string is in the format "MM/DD/YYYY" and represents a valid calendar date.
+
+   @param str - pointer to the date string
+   @return 1 if the date is valid
+   @return 0 if the format is incorrect (not in "MM/DD/YYYY" or contains non-numeric characters)
+   @return 3 if the month, day, or year is out of valid range
+   Pre-condition: str is a null-terminated string.
+   - The expected format is "MM/DD/YYYY" (length = 10).
+   - Month must be between 1 and 12.
+   - Year must be between 1900 and 2099.
+   - Day must be within the valid range for the given month and year.
+*/
 int isValidDate (char *str)
 {
 	int i;
@@ -304,7 +363,22 @@ int isValidDate (char *str)
 }
 
 
-/* func for taking input and storing user info in the struct*/
+/* verifyProfile handles the user registration process by collecting and validating user credentials and profile details.
+
+   @return User - a struct containing the registered user's details.
+   
+   The function ensures that:
+   - The username is alphanumeric and between 8 to 50 characters.
+   - The password is 8-20 characters long and contains at least one uppercase letter, one lowercase letter, one number, and one special character.
+   - The full name consists only of alphabetic characters and is 5-80 characters long.
+   - The email follows a valid format.
+   - The phone number is exactly 11 digits long and starts with '0'.
+   
+   If all inputs are valid, the user data is appended to "profiles.dat". 
+   If file writing fails, an error message is displayed.
+   
+   Pre-condition: The function assumes that the `User` structure and validation functions (`isAlphanumeric`, `verifyPass`, `isAlphabetic`, `verifyEmail`, `verifyNumber`, and `withinBounds`) are properly defined and implemented.
+*/
 User
 verifyProfile()
 {
@@ -427,7 +501,22 @@ verifyProfile()
 }
 
 
-//User log-in once registration is done
+/* verifyUser handles the user login process by checking provided credentials against stored user data.
+
+   @param p - pointer to a User struct where the authenticated user's details will be stored.
+   @return 1 if login is successful, 0 if unsuccessful after 3 attempts.
+
+   The function performs the following:
+   - Opens "profiles.dat" to read stored user credentials.
+   - Prompts the user to enter their username and password.
+   - Compares the input credentials with stored credentials.
+   - If a match is found, the user's details are copied into the provided User struct.
+   - Allows up to 3 login attempts before locking the user out.
+   - Displays an error message if no user profiles are found.
+
+   Pre-condition: The function assumes the `User` structure is properly defined. 
+   The "profiles.dat" file must exist and contain valid user records in the expected format.
+*/
 int
 verifyUser(User *p)
 {
@@ -506,7 +595,18 @@ verifyUser(User *p)
     return success;
 }
 
-// Function to check if the food name is valid
+/* isValidFoodName checks if a given food name follows the required format.
+
+   @param str - pointer to the input string representing the food name.
+   @return 1 if the food name is valid, 0 otherwise.
+
+   The function ensures:
+   - The length of the food name is between 3 and 50 characters (inclusive).
+   - The name consists of only alphanumeric characters and spaces.
+   - No consecutive spaces are present.
+
+   Pre-condition: str must be a valid null-terminated string.
+*/
 int isValidFoodName(const char *str) 
 {
     int len = strlen(str);
@@ -535,6 +635,18 @@ int isValidFoodName(const char *str)
     return 1; // Valid food name
 }
 
+/* foodNameExists checks if a food entry with the given name and username already exists in the food logs.
+
+   @param foodName - pointer to the input string representing the food name.
+   @param username - pointer to the input string representing the username of the food entry's author.
+   @return 1 if the food name exists under the specified username, 0 otherwise.
+
+   The function reads "foodLogs.txt" and compares each food name with the given name.
+   If a match is found where both the food name and username match, the function returns 1.
+   If the file doesn't exist or no match is found, it returns 0.
+
+   Pre-condition: foodName and username must be valid null-terminated strings.
+*/
 int foodNameExists(const char *foodName, const char *username)
 {
     FILE *file = fopen("foodLogs.txt", "r");
@@ -560,7 +672,22 @@ int foodNameExists(const char *foodName, const char *username)
     return 0; // Food name doesn't exist
 }
 
-//Function for taking input for food
+/* verifyFood prompts the user to input and validate food log details.
+
+   @param f - pointer to a foodLog struct where the details will be stored.
+   @param originalName - the original food name (used for checking uniqueness if modifying an entry).
+   @return 1 when a valid food entry is successfully gathered.
+
+   The function ensures:
+   - The food name is unique (unless unchanged) and follows format rules.
+   - The food type is restricted to 'a', 'm', or 'd'.
+   - The number of times eaten is a positive integer.
+   - The date first tried follows mm/dd/yyyy format and is a valid date.
+   - The location name is within 30 characters.
+   - The description does not exceed 300 characters.
+
+   Pre-condition: f must be a valid pointer to an initialized foodLog structure.
+*/
 int verifyFood(foodLog *f, const char *originalName)
 {
     int success = 0;
@@ -720,6 +847,17 @@ int verifyFood(foodLog *f, const char *originalName)
 	return 1;
 }
 
+/* addFoodLog allows a user to add a new food log entry.
+
+   @param profile - pointer to a User struct containing the logged-in user's details.
+
+   The function:
+   - Calls verifyFood() to ensure the new food log entry meets validation rules.
+   - Appends the validated food log entry to "foodLogs.txt" if successful.
+   - Displays success or failure messages accordingly.
+
+   Pre-condition: profile must be a valid pointer to a User struct with an active session.
+*/
 void addFoodLog(User *profile)
 {
     foodLog newLog;
@@ -755,9 +893,15 @@ void addFoodLog(User *profile)
         printf("|--------------------------------------------|\n");
         system("pause");
     }
-
 }
 
+/* recipeNameExists checks if a recipe name already exists in "Recipes.txt".
+
+	@param recipeName - the name of the recipe to check.
+	@param username - the username of the user checking for duplicates.
+	@return 1 if the recipe name exists, 0 otherwise.
+	Pre-condition: "Recipes.txt" follows the correct format and exists if not empty.
+*/
 int recipeNameExists(const char *recipeName, const char *username)
 {
 	int i;
@@ -797,7 +941,13 @@ int recipeNameExists(const char *recipeName, const char *username)
     return 0; // Food name doesn't exist
 }
 
-//Function for taking input for recipe
+/* verifyRecipe prompts the user to input and validate a recipe's details.
+
+   @param r - pointer to a Recipe struct where the recipe details will be stored.
+   @param originalName - the original recipe name (used to check for name changes).
+   @return 1 after successfully gathering and validating the recipe details.
+   Pre-condition: `r` must be a valid pointer to a Recipe struct.
+*/
 int verifyRecipe(Recipe *r, const char *originalName)
 {
     int success = 0;
@@ -963,6 +1113,12 @@ int verifyRecipe(Recipe *r, const char *originalName)
 	return 1;
 }
 
+/* addRecipe allows a user to create and save a new recipe.
+
+   @param profile - pointer to a User struct containing the logged-in user's details.
+   @return void (displays success or failure messages accordingly).
+   Pre-condition: `profile` must be a valid pointer to a User struct with an active session.
+*/
 void addRecipe(User *profile)
 {
     Recipe newRecipe; // Declare the foodLog struct
@@ -1013,6 +1169,11 @@ void addRecipe(User *profile)
     }
 }
 
+/* displayMenu presents the main menu and prompts the user to make a selection.
+
+   @return the user's selected menu option (integer between 1 and 15).
+   Pre-condition: The input must be a valid integer within the range of available options.
+*/
 int displayMenu ()
 {
 	int choice;
@@ -1059,6 +1220,12 @@ int displayMenu ()
     return choice;
 }
 
+/* displayFoodLog displays the details of a given food log.
+
+   @param log - pointer to a foodLog struct containing the food log details.
+   @return void (prints the food log information to the console).
+   Pre-condition: `log` must be a valid pointer to a foodLog struct.
+*/
 void displayFoodLog(const foodLog *log) 
 {
     printf("| Food Name      : %s\n", log->name);
@@ -1070,6 +1237,13 @@ void displayFoodLog(const foodLog *log)
     printf("| Description    : %s\n", log->desc);
 }
 
+/* modifyFoodLog allows a user to update an existing food log if they are authorized.
+
+   @param profile - pointer to a User struct containing the logged-in user's details.
+   @return void (displays success or failure messages accordingly).
+   Pre-condition: `profile` must be a valid pointer to a User struct with an active session.
+                 "foodLogs.txt" must exist if not empty and follow the correct format.
+*/
 void modifyFoodLog(User *profile) 
 {
     FILE *file = fopen("foodLogs.txt", "r");
@@ -1184,6 +1358,12 @@ void modifyFoodLog(User *profile)
     Sleep(1000);
 }
 
+/* displayRecipe prints the details of a given recipe.
+
+   @param recipe - pointer to a Recipe struct containing the recipe details.
+   @return void (prints the recipe information to the console).
+   Pre-condition: `recipe` must be a valid pointer to a Recipe struct.
+*/
 void displayRecipe(const Recipe *recipe) 
 {
     printf("| Food Name: %s\n", recipe->name);
@@ -1210,6 +1390,12 @@ void displayRecipe(const Recipe *recipe)
     }
 }
 
+/* modifyRecipe allows a user to modify an existing recipe in "Recipes.txt". 
+
+   @param profile - pointer to a User struct representing the logged-in user.
+   @return void (modifies the recipe file if changes are confirmed).
+   Pre-condition: "Recipes.txt" follows the correct format and exists if not empty.
+*/
 void modifyRecipe(User *profile) 
 {
     FILE *file = fopen("Recipes.txt", "r");
@@ -1374,6 +1560,12 @@ void modifyRecipe(User *profile)
     Sleep(1000);
 }
 
+/* deleteFoodLog allows a user to delete an existing food log from "foodLogs.txt".
+
+   @param profile - pointer to a User struct representing the logged-in user.
+   @return void (removes the food log if deletion is confirmed).
+   Pre-condition: "foodLogs.txt" follows the correct format and exists if not empty.
+*/
 void deleteFoodLog(User *profile) 
 {
     FILE *file = fopen("foodLogs.txt", "r");
@@ -1494,7 +1686,12 @@ void deleteFoodLog(User *profile)
     Sleep(1000);
 }
 
+/* deleteRecipe allows a user to delete a recipe from "Recipes.txt" if they are the author.
 
+   @param profile - pointer to a User struct representing the logged-in user.
+   @return void (removes the recipe if deletion is confirmed).
+   Pre-condition: "Recipes.txt" exists and follows the correct format.
+*/
 void deleteRecipe(User *profile) 
 {
     FILE *file = fopen("Recipes.txt", "r");
@@ -1646,10 +1843,15 @@ void deleteRecipe(User *profile)
     Sleep(1000);
 }
 
+/* 
+   displayUser displays the current user's profile information.
 
+   @param profile - pointer to a User struct representing the logged-in user.
+   @return void (simply prints the user details).
+   Pre-condition: profile is already loaded with valid user data.
+*/
 void displayUser(User *profile) 
 {
-	FILE *file = fopen("profiles.dat", "r");
 	
 	printf("=============================================\n");
     printf("|                 USER PROFILE              |\n");
@@ -1665,6 +1867,16 @@ void displayUser(User *profile)
     fclose(file);
 }
 
+/* 
+   compareDates compares two date strings in the format MM/DD/YYYY.
+
+   @param date1 - first date string to compare.
+   @param date2 - second date string to compare.
+   @return int - returns a positive value if date1 is later than date2, 
+                 a negative value if date1 is earlier than date2, 
+                 and 0 if both dates are the same.
+   Pre-condition: date1 and date2 must be valid strings in MM/DD/YYYY format.
+*/
 int compareDates(const char *date1, const char *date2) 
 {
     int year1, month1, day1, year2, month2, day2;
@@ -1686,6 +1898,12 @@ int compareDates(const char *date1, const char *date2)
     return day1 - day2;
 }
 
+/* 
+   displayAllFoodLogs reads and displays all food logs from "foodLogs.txt" in descending order by date.
+
+   @return void (prints the list of food logs or an error message if no logs exist).
+   Pre-condition: "foodLogs.txt" must exist and contain valid food log entries.
+*/
 void displayAllFoodLogs() 
 {
     FILE *foodFile = fopen("foodLogs.txt", "r");
@@ -1756,7 +1974,12 @@ void displayAllFoodLogs()
     system("pause");
 }
 
+/* 
+   displayAllRecipes reads and displays all recipes from "Recipes.txt" in ascending order by name.
 
+   @return void (prints the list of recipes or an error message if no recipes exist).
+   Pre-condition: "Recipes.txt" must exist and contain valid recipe entries.
+*/
 void displayAllRecipes() 
 {
     FILE *recipeFile = fopen("Recipes.txt", "r");
@@ -1850,6 +2073,14 @@ void displayAllRecipes()
     system("pause");
 }
 
+/* 
+   findUser searches for a user by username in "profiles.dat" and stores the user details in foundUser.
+
+   @param username - the username to search for.
+   @param foundUser - pointer to a User struct where the found user's data will be stored.
+   @return int - returns 1 if the user is found, otherwise returns 0.
+   Pre-condition: "profiles.dat" must exist and contain valid user data.
+*/
 int findUser(const char *username, User *foundUser) 
 {
     FILE *userFile = fopen("profiles.dat", "r");
@@ -1874,7 +2105,13 @@ int findUser(const char *username, User *foundUser)
     return 0;
 }
 
+/* 
+   displayAllByUsername searches for a user's food logs and recipes based on their username.
 
+   @param profile - pointer to a User struct representing the currently logged-in user.
+   @return void (displays the user's food logs and recipes if found).
+   Pre-condition: "profiles.dat", "foodLogs.txt", and "Recipes.txt" must exist and contain valid data.
+*/
 void displayAllByUsername(User *profile) 
 {
     char username[MAX_USERNAME_LENGTH];
@@ -1997,6 +2234,12 @@ void displayAllByUsername(User *profile)
     clearInputBuffer();
 }
 
+/* 
+   searchFoodLog searches for a specific food log by name.
+
+   @return void (displays the matching food log if found).
+   Pre-condition: "foodLogs.txt" must exist and contain valid food log data.
+*/
 void searchFoodLog() 
 {
     FILE *foodFile = fopen("foodLogs.txt", "r");
@@ -2051,6 +2294,12 @@ void searchFoodLog()
     getchar();
 }
 
+/* 
+   searchRecipe searches for a specific recipe by name.
+
+   @return void (displays the matching recipe if found).
+   Pre-condition: "Recipes.txt" must exist and contain valid recipe data.
+*/
 void searchRecipe() 
 {
     FILE *recipeFile = fopen("Recipes.txt", "r");
@@ -2116,7 +2365,12 @@ void searchRecipe()
     getchar();
 }
 
+/* 
+   showLoadingBar simulates a loading progress bar during the login process.
 
+   @return void (displays a progress bar effect on the console).
+   Pre-condition: The function is called when a loading effect is needed.
+*/
 void showLoadingBar() 
 {
     printf("\nLogging in . . .");
