@@ -81,4 +81,5 @@ void searchFoodLog();
 void searchRecipe();
 void showLoadingBar();
 
+
 #endif

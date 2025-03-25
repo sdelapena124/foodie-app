@@ -1,4 +1,5 @@
 #include "foodieHEADER.h"
+#include "foodieFXN.c"
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>
