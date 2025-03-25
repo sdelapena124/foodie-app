@@ -2104,10 +2104,10 @@ void displayAllByUsername(User *profile)
             {
                 if (strcmp(log.username, username) == 0) 
                 {
-                    printf("| Food Log #%d                                |\n", ++count);
+                    printf("| Food Log #%d                                \n", ++count);
                     printf("=============================================\n");
                     displayFoodLog(&log);
-                    printf("=============================================\n\n");
+                    printf("=============================================\n");
                     foundFood = 1;
                 }
             }
@@ -2136,7 +2136,7 @@ void displayAllByUsername(User *profile)
             {        
                 if (strcmp(recipe.username, user.username) == 0)
                 {
-                    printf("| Recipe #%d                                 |\n", ++count);
+                    printf("| Recipe #%d                                 \n", ++count);
                     printf("=============================================\n");
 
                     for (i = 0; i < recipe.numIng; i++) 
