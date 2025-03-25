@@ -1,5 +1,6 @@
-#include "foodieHEADER.h"
 
+#include "foodieHEADER.h"
+#include <unistd.h>
 
 /* clearInputBuffer clears any remaining characters in the input buffer.
 */
@@ -929,7 +930,7 @@ int verifyRecipe(Recipe *r, const char *originalName)
             printf(" Recipe name '%s' already exists!            \n", r->name);
             printf(" Please enter a unique food name.                    \n");
             printf("|-----------------------------------------------------|\n\n");
-            sleep(2);
+            Sleep(2);
             system("cls");
         }
         else
@@ -1659,7 +1660,7 @@ void deleteRecipe(User *profile)
 	{
         printf("| There are no recipes to delete.            |\n");
         printf("==============================================\n");
-        Sleep(1000);
+        sleep(1000);
         return;
     }
 
@@ -1672,7 +1673,7 @@ void deleteRecipe(User *profile)
         printf("| There are no recipes to delete.            |\n");
         printf("==============================================\n");
         fclose(file);
-        Sleep(1000);
+        sleep(1000);
         return;
     }
     
@@ -1795,7 +1796,7 @@ void deleteRecipe(User *profile)
     }
 
     system("pause");
-    Sleep(1000);
+    sleep(1000);
 }
 
 /* 
