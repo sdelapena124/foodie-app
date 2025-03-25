@@ -1,49 +1,9 @@
+#include "foodieHEADER.h"
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>
+#include <stdlib.h>
 
-#define MAX_INGREDIENTS 21
-#define MAX_INSTRUCTIONS 21
-#define MAX_USERNAME_LENGTH 51
-#define MAX_FILENAME 30
-
-/* FOOD LOG STRUCT */
-typedef struct 
-{
-    char name[51];
-    char username[51];
-    char fullname[81];
-    char type;
-    int timesEaten;
-    char ftDate[11];
-    char ftPlace[31];
-    char desc[301];    
-} foodLog;
-
-/* RECIPE STRUCT */
-typedef struct 
-{
-    char name[51];
-    char username[51];
-    char fullname[81];
-    char desc[161];
-    int prepTime;
-    int cookTime;
-    int numIng;
-    char ingredients[MAX_INGREDIENTS][81];
-    int numInstructions;
-    char instructions[MAX_INSTRUCTIONS][101];
-} Recipe;
-
-/* USER STRUCT */
-typedef struct
-{
-    char username[51];
-    char pass[21];
-    char name[81];
-    char email[31];
-    char number[12];
-} User;
 
 //Divider
 void displayDivider ()
@@ -56,7 +16,6 @@ int
 isAlphanumeric(char *str)
 {
     int i;
-    int num; //number of non alphanumeric char
     int len = strlen(str);
 
     for(i = 0; i < len; i++)
@@ -94,7 +53,8 @@ isAlphabetic(char *str)
 }
 
 //for clearing input buffer for scanf
-void clearInputBuffer() {
+void clearInputBuffer() 
+{
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
@@ -103,8 +63,6 @@ void clearInputBuffer() {
 int
 withinBounds(char *str, int lowerLimit, int upperLimit)
 {
-    int len = strlen(str);
-
     if (strlen(str) < lowerLimit || strlen(str) > upperLimit)
     {
         return 0;
@@ -181,10 +139,10 @@ verifyNumber(char *str)
     return 1;
 }
 
-int verifyEmail (char *str)
+int 
+verifyEmail (char *str)
 {
 	int length;
-	int i;
 	int atIndex = -1;
 	int dotIndex = -1;
 	int atCount = 0;
@@ -232,7 +190,8 @@ int verifyEmail (char *str)
     return 1;  
 }
 
-int isLeapYear(int year) 
+int 
+isLeapYear(int year) 
 {
     // Leap year: divisible by 4 AND (not divisible by 100 OR divisible by 400)
     return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
@@ -344,7 +303,7 @@ verifyProfile()
 	    }
 	    else
 	    {
-	        printf("Password must be 8-20 characters and include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character (!, @, #, $, %, &, *, .).\n");
+	        printf("Password must be 8-20 characters and include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character (! @ # $ % & * .)\n");
 	    }
 	} while (!validPassword);
 	
@@ -587,7 +546,7 @@ int verifyFood(foodLog *f, const char *originalName)
             printf(" Food name '%s' already exists!            \n", f->name);
             printf(" Please enter a unique food name.              \n");
             printf("|-----------------------------------------------|\n\n");
-            sleep(2);
+            Sleep(2);
             system("cls");
         }
         else
@@ -824,7 +783,7 @@ int verifyRecipe(Recipe *r, const char *originalName)
             printf(" Recipe name '%s' already exists!            \n", r->name);
             printf(" Please enter a unique food name.                    \n");
             printf("|-----------------------------------------------------|\n\n");
-            sleep(2);
+            Sleep(2);
             system("cls");
         }
         else
