@@ -544,7 +544,7 @@ int foodNameExists(const char *foodName, const char *username)
     }
 
     foodLog tempLog;
-    while (fscanf(file, "%50[^\n]\n%50s %[^\n]\n %c %d\n %10[^\n]\n %30[^\n]\n %300[^\n]\n",
+    while (fscanf(file, "%50[^\n]\n%50s %[^\n]\n%c %d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
                   tempLog.name, tempLog.username, tempLog.fullname,
 				  &tempLog.type, &tempLog.timesEaten,
                   tempLog.ftDate, tempLog.ftPlace, tempLog.desc) == 8)
@@ -1109,7 +1109,8 @@ void modifyFoodLog(User *profile)
     foodLog log; 
 	foodLog tempLog;
 
-    int found = 0;
+    int found = 0, authorized = 0;
+    
     while (fscanf(file, "%50[^\n]\n%50s %[^\n]\n%c %d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
                   log.name, log.username, log.fullname, &log.type, &log.timesEaten,
                   log.ftDate, log.ftPlace, log.desc) == 8) 
@@ -1117,39 +1118,55 @@ void modifyFoodLog(User *profile)
         if (strcmp(log.name, foodName) == 0) 
 		{
             found = 1;
-            printf("\n\n==============================================\n");
-            printf("|             CURRENT FOOD LOG               |\n");
-            printf("==============================================\n");
-            displayFoodLog(&log);
-
-            tempLog = log;
             
-
-            printf("\n\n|         ENTER NEW FOOD LOG DETAILS         |\n\n");
-            verifyFood(&tempLog, log.name);
-
-            char confirm;
-            printf("==============================================\n");
-            printf("| Confirm changes? (Y/N): ");
-            scanf(" %c", &confirm);
-
-            if (confirm == 'y' || confirm == 'Y') {
-                fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
-                        tempLog.name, tempLog.username, tempLog.fullname, tempLog.type, tempLog.timesEaten, tempLog.ftDate, tempLog.ftPlace, tempLog.desc);
-                printf("Food log modified successfully.\n");
-            } 
-			else 
-			{
-                fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
-                        log.name, log.username, log.fullname, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
-                printf("| Modification cancelled.                     |\n");
+            if (strcmp(log.username, profile->username) == 0)
+            {
+            	authorized = 1;
+	            printf("\n\n==============================================\n");
+	            printf("|             CURRENT FOOD LOG               |\n");
+	            printf("==============================================\n");
+	            displayFoodLog(&log);
+	
+	            tempLog = log;
+	            
+	
+	            printf("\n\n|         ENTER NEW FOOD LOG DETAILS         |\n\n");
+	            verifyFood(&tempLog, log.name);
+	
+	            char confirm;
+	            printf("==============================================\n");
+	            printf("| Confirm changes? (Y/N): ");
+	            scanf(" %c", &confirm);
+	            clearInputBuffer();
+	
+	            if (confirm == 'y' || confirm == 'Y') {
+	                fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
+	                        tempLog.name, tempLog.username, tempLog.fullname, 
+							tempLog.type, tempLog.timesEaten, tempLog.ftDate, tempLog.ftPlace, tempLog.desc);
+	                printf("Food log modified successfully.\n");
+	            } 
+				else 
+				{
+	                fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
+	                        log.name, log.username, log.fullname, 
+							log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
+	                printf("| Modification cancelled.                     |\n");
+	            }
+			}
+   			else
+			{ 
+                printf("==============================================\n");
+                printf("| You are NOT authorized to modify this food log! |\n");
+                printf("==============================================\n");
+                system("pause");
             }
-
         } 
-		else 
+        
+		if (strcmp(log.name, foodName) != 0 || !authorized)
 		{
             fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
-                    log.name, log.username, log.fullname, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
+                    log.name, log.username, log.fullname, log.type, 
+					log.timesEaten, log.ftDate, log.ftPlace, log.desc);
         }
     }
     fclose(file);
@@ -1232,10 +1249,11 @@ void modifyRecipe(User *profile)
     Recipe recipe;
     Recipe tempRecipe;
     
-    int i, found = 0;
+    int i, found = 0, authorized = 0;
 
     while (fscanf(file, "%50[^\n]\n%50s %[^\n]\n%160[^\n]\n%d %d\n%d\n",
-            recipe.name, recipe.username, recipe.fullname, recipe.desc, &recipe.prepTime, &recipe.cookTime, &recipe.numIng) == 7) 
+            recipe.name, recipe.username, recipe.fullname, 
+			recipe.desc, &recipe.prepTime, &recipe.cookTime, &recipe.numIng) == 7) 
 	{
         for (i = 0; i < recipe.numIng; i++) 
 		{
@@ -1252,63 +1270,76 @@ void modifyRecipe(User *profile)
         if (strcmp(recipe.name, recipeName) == 0) 
 		{
             found = 1;
-            printf("\n\n==============================================\n");
-            printf("|             CURRENT RECIPE                 |\n");
-            printf("==============================================\n");
-            displayRecipe(&recipe);
-
-            tempRecipe = recipe;
             
-            printf("\n\n|         ENTER NEW RECIPE DETAILS           |\n\n");
-            verifyRecipe(&tempRecipe, recipe.name);
-
-            char confirm;
-            printf("==============================================\n");
-            printf("| Confirm changes? (Y/N): ");
-            scanf(" %c", &confirm);
-            clearInputBuffer();
-
-            if (confirm == 'y' || confirm == 'Y') 
-			{
-                fprintf(temp, "%s\n%s %s\n%s\n%d %d\n%d\n",
-                        tempRecipe.name, tempRecipe.username, tempRecipe.fullname, tempRecipe.desc,
-                        tempRecipe.prepTime, tempRecipe.cookTime, tempRecipe.numIng);
-
-                for (i = 0; i < tempRecipe.numIng; i++) 
+            if (strcmp(recipe.username, profile->username) == 0)
+            {
+            	authorized = 1;
+	            printf("\n\n==============================================\n");
+	            printf("|             CURRENT RECIPE                 |\n");
+	            printf("==============================================\n");
+	            displayRecipe(&recipe);
+	
+	            tempRecipe = recipe;
+	            
+	            printf("\n\n|         ENTER NEW RECIPE DETAILS           |\n\n");
+	            verifyRecipe(&tempRecipe, recipe.name);
+	
+	            char confirm;
+	            printf("==============================================\n");
+	            printf("| Confirm changes? (Y/N): ");
+	            scanf(" %c", &confirm);
+	            clearInputBuffer();
+	
+	            if (confirm == 'y' || confirm == 'Y') 
 				{
-                    fprintf(temp, "%s\n", tempRecipe.ingredients[i]);
-                }
-
-                fprintf(temp, "%d\n", tempRecipe.numInstructions);
-
-                for (i = 0; i < tempRecipe.numInstructions; i++) 
+	                fprintf(temp, "%s\n%s %s\n%s\n%d %d\n%d\n",
+	                        tempRecipe.name, tempRecipe.username, tempRecipe.fullname, tempRecipe.desc,
+	                        tempRecipe.prepTime, tempRecipe.cookTime, tempRecipe.numIng);
+	
+	                for (i = 0; i < tempRecipe.numIng; i++) 
+					{
+	                    fprintf(temp, "%s\n", tempRecipe.ingredients[i]);
+	                }
+	
+	                fprintf(temp, "%d\n", tempRecipe.numInstructions);
+	
+	                for (i = 0; i < tempRecipe.numInstructions; i++) 
+					{
+	                    fprintf(temp, "%s\n", tempRecipe.instructions[i]);
+	                }
+	
+	                printf("Recipe modified successfully.\n");
+	            } 
+				else 
 				{
-                    fprintf(temp, "%s\n", tempRecipe.instructions[i]);
-                }
-
-                printf("Recipe modified successfully.\n");
-            } 
-			else 
-			{
-                fprintf(temp, "%s\n%s %s\n%s\n%d %d\n%d\n",
-                        recipe.name, recipe.username, recipe.fullname, recipe.desc,
-                        recipe.prepTime, recipe.cookTime, recipe.numIng);
-
-                for (i = 0; i < recipe.numIng; i++) 
-				{
-                    fprintf(temp, "%s\n", recipe.ingredients[i]);
-                }
-
-                fprintf(temp, "%d\n", recipe.numInstructions);
-
-                for (i = 0; i < recipe.numInstructions; i++) 
-				{
-                    fprintf(temp, "%s\n", recipe.instructions[i]);
-                }
-                printf("Modification cancelled.\n");
-            }
+	                fprintf(temp, "%s\n%s %s\n%s\n%d %d\n%d\n",
+	                        recipe.name, recipe.username, recipe.fullname, recipe.desc,
+	                        recipe.prepTime, recipe.cookTime, recipe.numIng);
+	
+	                for (i = 0; i < recipe.numIng; i++) 
+					{
+	                    fprintf(temp, "%s\n", recipe.ingredients[i]);
+	                }
+	
+	                fprintf(temp, "%d\n", recipe.numInstructions);
+	
+	                for (i = 0; i < recipe.numInstructions; i++) 
+					{
+	                    fprintf(temp, "%s\n", recipe.instructions[i]);
+	                }
+	                printf("Modification cancelled.\n");
+	            }
+	        }
+	        else
+	        {
+	        	printf("|------------------------------------------------|\n");
+                printf("|  You are not authorized to modify this recipe! |\n");
+                printf("|------------------------------------------------|\n");
+                system("pause");
+			}
         } 
-		else 
+        
+		if (strcmp(recipe.name, recipeName) != 0 || !authorized)
 		{
             fprintf(temp, "%s\n%s %s\n%s\n%d %d\n%d\n",
                         recipe.name, recipe.username, recipe.fullname, recipe.desc,
