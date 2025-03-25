@@ -369,7 +369,7 @@ verifyProfile()
 	    }
 	    else
 	    {
-	        printf("Password must be 8-20 characters and include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character (!, @, #, $, %, &, *, .).\n");
+	        printf("Password must be 8-20 characters and include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character (! @ # $ %% & * .).\n");
 	    }
 	} while (!validPassword);
 	
@@ -1161,9 +1161,12 @@ int displayMenu ()
 	    if (validInput != 1 || choice < 1 || choice > 15)
 	    {
 	        printf("Invalid input. Please enter a number between 1 and 15.\n");
-	
-	        while (getchar() != '\n');
-			system("pause");
+
+            {
+                while (getchar() != '\n');
+                system("pause");
+            }
+	        
 	    }
 
     } while (validInput != 1 || choice < 1 || choice > 15);
@@ -1652,10 +1655,10 @@ void deleteRecipe(User *profile)
     printf("==============================================\n");
     
     if (file == NULL) 
-	{
+    {
         printf("| There are no recipes to delete.            |\n");
         printf("==============================================\n");
-        sleep(1000);
+        Sleep(1000);  // Pauses for 1 second (1000 ms)
         return;
     }
 
@@ -1664,11 +1667,11 @@ void deleteRecipe(User *profile)
     fscanf(file, "%*c");  
 
     if (feof(file)) 
-	{  
+    {  
         printf("| There are no recipes to delete.            |\n");
         printf("==============================================\n");
         fclose(file);
-        sleep(1000);
+        Sleep(1000);  // 1000 ms = 1 second
         return;
     }
     
@@ -1791,7 +1794,7 @@ void deleteRecipe(User *profile)
     }
 
     system("pause");
-    sleep(1000);
+    Sleep(1000);
 }
 
 /* 
@@ -2324,9 +2327,9 @@ void showLoadingBar()
 {
     printf("\nLogging in . . .");
     for (int i = 0; i <= 100; i += 25) 
-	{
+    {
         printf("\rLogging in . . . [%3d%%] ", i);
-        usleep(350000);
+        Sleep(350);  // 350 ms = 0.35 seconds
     }
     printf("\n");
 }

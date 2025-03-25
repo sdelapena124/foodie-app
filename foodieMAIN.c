@@ -3,8 +3,8 @@
 #include <windows.h>
 #include <stdlib.h>
 
-#include "foodieFXN.c"
 #include "foodieHEADER.h"
+#include "foodieFXN.c"
 
 int main() 
 {
