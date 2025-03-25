@@ -1,52 +1,7 @@
-#include <stdio.h>
-#include <string.h>
-#include <windows.h>
+#include "foodieHEADER.h"
 
-#define MAX_INGREDIENTS 21
-#define MAX_INSTRUCTIONS 21
-#define MAX_USERNAME_LENGTH 51
-#define MAX_FILENAME 30
-
-/* FOOD LOG STRUCT */
-typedef struct 
-{
-    char name[51];
-    char username[51];
-    char fullname[81];
-    char type;
-    int timesEaten;
-    char ftDate[11];
-    char ftPlace[31];
-    char desc[301];    
-} foodLog;
-
-/* RECIPE STRUCT */
-typedef struct 
-{
-    char name[51];
-    char username[51];
-    char fullname[81];
-    char desc[161];
-    int prepTime;
-    int cookTime;
-    int numIng;
-    char ingredients[MAX_INGREDIENTS][81];
-    int numInstructions;
-    char instructions[MAX_INSTRUCTIONS][101];
-} Recipe;
-
-/* USER STRUCT */
-typedef struct
-{
-    char username[51];
-    char pass[21];
-    char name[81];
-    char email[31];
-    char number[12];
-} User;
 
 /* clearInputBuffer clears any remaining characters in the input buffer.
-
 */
 void clearInputBuffer() 
 {
@@ -714,7 +669,7 @@ int verifyFood(foodLog *f, const char *originalName)
             printf(" Food name '%s' already exists!            \n", f->name);
             printf(" Please enter a unique food name.              \n");
             printf("|-----------------------------------------------|\n\n");
-            sleep(2);
+            Sleep(2);
             system("cls");
         }
         else
@@ -1863,8 +1818,6 @@ void displayUser(User *profile)
     printf("=============================================\n");
     system("pause");
 
-    clearInputBuffer();
-    fclose(file);
 }
 
 /* 
