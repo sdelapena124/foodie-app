@@ -2076,13 +2076,14 @@ void searchRecipe()
 }
 
 
-void showLoadingBar() 
+void showLoadingBar()
 {
-    printf("\nLogging in . . .");
-    for (int i = 0; i <= 100; i += 25) 
-	{
-        printf("\rLogging in . . . [%3d%%] ", i);
-        sleep(350000);
+    printf("\nLogging in...");
+    for (int i = 0; i <= 100; i += 25)
+    {
+        printf("\rLogging in... [%d%%]", i);
+        fflush(stdout);
+        Sleep(350);
     }
     printf("\n");
 }
