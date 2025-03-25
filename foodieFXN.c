@@ -303,7 +303,7 @@ verifyProfile()
 	    }
 	    else
 	    {
-	        printf("Password must be 8-20 characters and include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character (! @ # $ % & * .)\n");
+	        printf("Password must be 8-20 characters and include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character (! @ # $ %% & * .)\n");
 	    }
 	} while (!validPassword);
 	
@@ -1010,7 +1010,7 @@ int displayMenu ()
 	        printf("Invalid input. Please enter a number between 1 and 15.\n");
 	
 	        while (getchar() != '\n');
-			system("pause");
+            system("pause");
 	    }
 
     } while (validInput != 1 || choice < 1 || choice > 15);
