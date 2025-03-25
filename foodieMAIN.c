@@ -1,16 +1,14 @@
+#include "foodieHEADER.h"
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "foodieFXN.c"
-
 int main() 
 {
     User profile;
     int choice;
-    char filename[MAX_FILENAME + 1];
     int loginSuccessful = 0;
     int nOption;
     
