@@ -535,7 +535,7 @@ int isValidFoodName(const char *str)
     return 1; // Valid food name
 }
 
-int foodNameExists(const char *foodName)
+int foodNameExists(const char *foodName, const char *username)
 {
     FILE *file = fopen("foodLogs.txt", "r");
     if (file == NULL)
@@ -544,12 +544,12 @@ int foodNameExists(const char *foodName)
     }
 
     foodLog tempLog;
-    while (fscanf(file, "%50[^\n]\n%50s %[^\n]\n%c %d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
-                  tempLog.name, tempLog.username, tempLog.username,
+    while (fscanf(file, "%50[^\n]\n%50s %[^\n]\n %c %d\n %10[^\n]\n %30[^\n]\n %300[^\n]\n",
+                  tempLog.name, tempLog.username, tempLog.fullname,
 				  &tempLog.type, &tempLog.timesEaten,
                   tempLog.ftDate, tempLog.ftPlace, tempLog.desc) == 8)
     {
-        if (strcmp(tempLog.name, foodName) == 0)
+        if (strcmp(tempLog.name, foodName) == 0 && strcmp(tempLog.username, username) == 0)
         {
             fclose(file);
             return 1; // Food name exists
@@ -561,7 +561,7 @@ int foodNameExists(const char *foodName)
 }
 
 //Function for taking input for food
-int verifyFood(foodLog *f)
+int verifyFood(foodLog *f, const char *originalName)
 {
     int success = 0;
     
@@ -581,7 +581,7 @@ int verifyFood(foodLog *f)
             printf("| characters and may contain single spaces.  |\n");
             printf("|--------------------------------------------|\n\n");
         }
-        else if (foodNameExists(f->name))
+        else if (strcmp(f->name, originalName) != 0 && foodNameExists(f->name, f->username))
         {
             printf("|-----------------------------------------------|\n");
             printf("| Food name '%s' already exists!            |\n", f->name);
@@ -724,7 +724,7 @@ void addFoodLog(User *profile)
 {
     foodLog newLog;
     
-    if (verifyFood(&newLog)) 
+    if (verifyFood(&newLog, "")) 
     {
         FILE *file = fopen("foodLogs.txt", "a");
         if (file == NULL)
@@ -758,7 +758,7 @@ void addFoodLog(User *profile)
 
 }
 
-int recipeNameExists(const char *recipeName)
+int recipeNameExists(const char *recipeName, const char *username)
 {
 	int i;
 	
@@ -798,7 +798,7 @@ int recipeNameExists(const char *recipeName)
 }
 
 //Function for taking input for recipe
-int verifyRecipe(Recipe *r)
+int verifyRecipe(Recipe *r, const char *originalName)
 {
     int success = 0;
     
@@ -818,7 +818,7 @@ int verifyRecipe(Recipe *r)
             printf("| characters and may contain single spaces.   |\n");
             printf("|--------------------------------------------|\n\n");
         }
-        else if (recipeNameExists(r->name))
+        else if (strcmp(r->name, originalName) != 0 && recipeNameExists(r->name,r->username))
         {
             printf("|-----------------------------------------------------|\n");
             printf("| Recipe name '%s' already exists!            |\n", r->name);
@@ -967,7 +967,7 @@ void addRecipe(User *profile)
 {
     Recipe newRecipe; // Declare the foodLog struct
     
-    if (verifyRecipe(&newRecipe)) // Pass the address of the struct to verifyFood
+    if (verifyRecipe(&newRecipe, "")) // Pass the address of the struct to verifyFood
     {
 
         FILE *file = fopen("Recipes.txt", "a");
@@ -1011,7 +1011,6 @@ void addRecipe(User *profile)
         printf("|--------------------------------------------|\n\n");
         system("pause");
     }
-
 }
 
 int displayMenu ()
@@ -1062,12 +1061,12 @@ int displayMenu ()
 
 void displayFoodLog(const foodLog *log) 
 {
-    printf("Food Name: %s\n", log->name);
-    printf("Type: %c\n", log->type);
-    printf("Times Eaten: %d\n", log->timesEaten);
-    printf("Date: %s\n", log->ftDate);
-    printf("Place: %s\n", log->ftPlace);
-    printf("Description: %s\n", log->desc);
+    printf("| Food Name      : %s\n", log->name);
+    printf("| Type           : %c\n", log->type);
+    printf("| Times Eaten    : %d\n", log->timesEaten);
+    printf("| Date First Tried : %s\n", log->ftDate);
+    printf("| Place          : %s\n", log->ftPlace);
+    printf("| Description    : %s\n", log->desc);
 }
 
 void modifyFoodLog(User *profile) 
@@ -1076,7 +1075,8 @@ void modifyFoodLog(User *profile)
     
     if (file == NULL) 
 	{
-        printf("There are no food logs to modify.\n");
+        printf("| There are no food logs to modify.          |\n");
+        printf("==============================================\n");
         Sleep(1000);
         return;
     }
@@ -1088,7 +1088,8 @@ void modifyFoodLog(User *profile)
     
     if (feof(file)) 
 	{
-        printf("There are no food logs to modify.\n");
+        printf("| There are no food logs to modify.          |\n");
+        printf("==============================================\n");
         fclose(file);
         Sleep(1000);
         return;
@@ -1097,7 +1098,10 @@ void modifyFoodLog(User *profile)
 
     FILE *temp = fopen("temp.txt", "w");
     char foodName[51];
-    printf("Enter food name to modify: ");
+    printf("==============================================\n");
+    printf("|           MODIFY FOOD LOG                  |\n");
+    printf("==============================================\n");
+    printf("| Enter food name to modify: ");
     scanf(" %[^\n]", foodName);
     
     clearInputBuffer();
@@ -1113,17 +1117,20 @@ void modifyFoodLog(User *profile)
         if (strcmp(log.name, foodName) == 0) 
 		{
             found = 1;
-            displayDivider();
-            printf("Current:\n");
+            printf("\n\n==============================================\n");
+            printf("|             CURRENT FOOD LOG               |\n");
+            printf("==============================================\n");
             displayFoodLog(&log);
 
             tempLog = log;
             
-            displayDivider();
-            verifyFood(&tempLog);
+
+            printf("\n\n|         ENTER NEW FOOD LOG DETAILS         |\n\n");
+            verifyFood(&tempLog, log.name);
 
             char confirm;
-            printf("Confirm changes? (Y/N): ");
+            printf("==============================================\n");
+            printf("| Confirm changes? (Y/N): ");
             scanf(" %c", &confirm);
 
             if (confirm == 'y' || confirm == 'Y') {
@@ -1135,7 +1142,7 @@ void modifyFoodLog(User *profile)
 			{
                 fprintf(temp, "%s\n%s %s\n%c %d\n%s\n%s\n%s\n",
                         log.name, log.username, log.fullname, log.type, log.timesEaten, log.ftDate, log.ftPlace, log.desc);
-                printf("Modification cancelled.\n");
+                printf("| Modification cancelled.                     |\n");
             }
 
         } 
@@ -1152,31 +1159,35 @@ void modifyFoodLog(User *profile)
     
     if (!found) 
 	{
-		printf("Food log not found.\n");	
+		printf("==============================================\n");
+        printf("| Food log not found.                        |\n");
+        printf("==============================================\n");	
 	}
     Sleep(1000);
 }
 
 void displayRecipe(const Recipe *recipe) 
 {
-    printf("Food Name: %s\n", recipe->name);
-    printf("Description: %s\n", recipe->desc);
-    printf("Preparation Time: %d min/s\n", recipe->prepTime);
-    printf("Cooking Time: %d min/s\n", recipe->cookTime);
-    printf("Number of Ingredients: %d\n", recipe->numIng);
-    printf("List of Ingredients:\n");
+    printf("| Food Name: %s\n", recipe->name);
+    printf("| Description: %s\n", recipe->desc);
+    printf("| Preparation Time: %d min/s\n", recipe->prepTime);
+    printf("| Cooking Time: %d min/s\n", recipe->cookTime);
+    printf("| Number of Ingredients: %d\n", recipe->numIng);
+    printf("|---------------------------------------------\n");
+    printf("| List of Ingredients:\n");
     
     for (int i = 0; i < recipe->numIng; i++) 
 	{
-        printf("- %s\n", recipe->ingredients[i]);
+        printf("| - %s\n", recipe->ingredients[i]);
     }
     
-    printf("Number of Instructions: %d\n", recipe->numInstructions);
-    printf("Instructions:\n");
+    printf("|---------------------------------------------\n");
+    printf("| Number of Instructions: %d\n", recipe->numInstructions);
+    printf("| Instructions:\n");
     
     for (int i = 0; i < recipe->numInstructions; i++) 
 	{
-        printf("%d. %s\n",i+1, recipe->instructions[i]);
+        printf("| %d. %s\n", i+1, recipe->instructions[i]);
     }
 }
 
@@ -1185,7 +1196,9 @@ void modifyRecipe(User *profile)
     FILE *file = fopen("Recipes.txt", "r");
     if (file == NULL) 
 	{
-        printf("There are no recipes to modify.\n");
+        printf("==============================================\n");
+        printf("| There are no recipes to modify.            |\n");
+        printf("==============================================\n");
         Sleep(1000);
         return;
     }
@@ -1197,7 +1210,9 @@ void modifyRecipe(User *profile)
     
     if (feof(file)) 
 	{
-        printf("There are no recipes to modify.\n");
+        printf("==============================================\n");
+        printf("| There are no recipes to modify.            |\n");
+        printf("==============================================\n");
         fclose(file);
         Sleep(1000);
         return;
@@ -1207,8 +1222,11 @@ void modifyRecipe(User *profile)
 
     FILE *temp = fopen("temp.txt", "w");
     char recipeName[51];
-    printf("Enter recipe name to modify: ");
-    scanf("%50s", recipeName);
+    printf("==============================================\n");
+    printf("|              MODIFY RECIPE                 |\n");
+    printf("==============================================\n");
+    printf("| Enter recipe name to modify: ");
+    scanf(" %[^\n]", recipeName);
     clearInputBuffer();
 
     Recipe recipe;
@@ -1234,17 +1252,19 @@ void modifyRecipe(User *profile)
         if (strcmp(recipe.name, recipeName) == 0) 
 		{
             found = 1;
-            displayDivider();
-            printf("\nCurrent Recipe:\n");
+            printf("\n\n==============================================\n");
+            printf("|             CURRENT RECIPE                 |\n");
+            printf("==============================================\n");
             displayRecipe(&recipe);
 
             tempRecipe = recipe;
             
-            displayDivider();
-            verifyRecipe(&tempRecipe);
+            printf("\n\n|         ENTER NEW RECIPE DETAILS           |\n\n");
+            verifyRecipe(&tempRecipe, recipe.name);
 
             char confirm;
-            printf("Confirm changes? (Y/N): ");
+            printf("==============================================\n");
+            printf("| Confirm changes? (Y/N): ");
             scanf(" %c", &confirm);
             clearInputBuffer();
 
@@ -1314,7 +1334,9 @@ void modifyRecipe(User *profile)
     rename("temp.txt", "Recipes.txt");
     if (!found) 
 	{
-		printf("Recipe not found.\n");	
+		printf("==============================================\n");
+        printf("| Recipe not found.                          |\n");
+        printf("==============================================\n");
 	}
     Sleep(1000);
 }
