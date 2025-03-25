@@ -1,6 +1,5 @@
 
 #include "foodieHEADER.h"
-#include <unistd.h>
 
 /* clearInputBuffer clears any remaining characters in the input buffer.
 */
@@ -20,7 +19,6 @@ int
 isAlphanumeric(char *str)
 {
     int i;
-    int num; //number of non alphanumeric char
     int len = strlen(str);
 
     for(i = 0; i < len; i++)
@@ -74,8 +72,6 @@ isAlphabetic(char *str)
 int
 withinBounds(char *str, int lowerLimit, int upperLimit)
 {
-    int len = strlen(str);
-
     if (strlen(str) < lowerLimit || strlen(str) > upperLimit)
     {
         return 0;
@@ -180,7 +176,6 @@ verifyNumber(char *str)
 int verifyEmail (char *str)
 {
 	int length;
-	int i;
 	int atIndex = -1;
 	int dotIndex = -1;
 	int atCount = 0;

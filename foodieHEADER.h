@@ -1,6 +1,11 @@
 #ifndef FOODIEHEADER_H
 #define FOODIEHEADER_H
 
+#include <stdio.h>
+#include <string.h>
+#include <windows.h>
+#include <stdlib.h>
+
 #define MAX_INGREDIENTS 21
 #define MAX_INSTRUCTIONS 21
 #define MAX_USERNAME_LENGTH 51
