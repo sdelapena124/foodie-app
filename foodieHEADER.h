@@ -80,6 +80,8 @@ void displayUser(User *profile);
 int compareDates(const char *date1, const char *date2);
 void displayAllFoodLogs();
 void displayAllRecipes();
+void displayTopThree(User *profile);
+void displayTopThreeRecipes();
 int findUser(const char *username, User *foundUser);
 void displayAllByUsername(User *profile);
 void searchFoodLog();
