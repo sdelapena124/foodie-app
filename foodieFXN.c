@@ -1139,39 +1139,41 @@ int displayMenu ()
 	{
 		system("cls");
 		
-	    printf("=============================================\n");
-        printf("|              FOODIE APP MENU              |\n");
-        printf("=============================================\n");
-        printf("| [1]   + Add Food Log                      |\n");
-        printf("| [2]   + Add Recipe                        |\n");
-        printf("| [3]   + Modify Food Log                   |\n");
-        printf("| [4]   + Modify Recipe                     |\n");
-        printf("| [5]   + Delete Food Log                   |\n");
-        printf("| [6]   + Delete Recipe                     |\n");
-        printf("| [7]   + Display User                      |\n");
-        printf("| [8]   + Display All Logs by Username      |\n");
-        printf("| [9]   + Display All Food Logs             |\n");
-        printf("| [10]  + Display All Recipes               |\n");
-        printf("| [11]  + Search Food Log                   |\n");
-        printf("| [12]  + Search Recipe                     |\n");
-        printf("| [13]  + Export Data                       |\n");
-        printf("| [14]  + Import Data                       |\n");
-        printf("| [15]  + Exit                              |\n");
-        printf("=============================================\n");
+	    printf("======================================================\n");
+        printf("|              FOODIE APP MENU                       |\n");
+        printf("======================================================\n");
+        printf("| [1]   + Add Food Log                               |\n");
+        printf("| [2]   + Add Recipe                                 |\n");
+        printf("| [3]   + Modify Food Log                            |\n");
+        printf("| [4]   + Modify Recipe                              |\n");
+        printf("| [5]   + Delete Food Log                            |\n");
+        printf("| [6]   + Delete Recipe                              |\n");
+        printf("| [7]   + Display User                               |\n");
+        printf("| [8]   + Display All Logs by Username               |\n");
+        printf("| [9]   + Display All Food Logs                      |\n");
+        printf("| [10]  + Display All Recipes                        |\n");
+        printf("| [11]  + Display Top 5 Foods Most Eaten             |\n");
+        printf("| [12]  + Display Top 3 Fastest Recipes to Prepare   |\n");
+        printf("| [13]  + Search Food Log                            |\n");
+        printf("| [14]  + Search Recipe                              |\n");
+        printf("| [15]  + Export Data                                |\n");
+        printf("| [16]  + Import Data                                |\n");
+        printf("| [17]  + Exit                                       |\n");
+        printf("=====================================================\n");
 	    
-	    printf("Enter your choice (1-15): ");
+	    printf("Enter your choice (1-17): ");
 	    
 	    validInput = scanf("%d", &choice);
 	
-	    if (validInput != 1 || choice < 1 || choice > 15)
+	    if (validInput != 1 || choice < 1 || choice > 17)
 	    {
-	        printf("Invalid input. Please enter a number between 1 and 15.\n");
+	        printf("Invalid input. Please enter a number between 1 and 16.\n");
 	
 	        while (getchar() != '\n');
 			system("pause");
 	    }
 
-    } while (validInput != 1 || choice < 1 || choice > 15);
+    } while (validInput != 1 || choice < 1 || choice > 17);
 
     return choice;
 }
@@ -2187,6 +2189,166 @@ void displayAllByUsername(User *profile)
     }
     clearInputBuffer();
 }
+
+/* 
+   displayTopThree searches through the food logs for the top three most eaten foods
+
+   @param profile - pointer to a User struct representing the currently logged-in user.
+   @return void (displays the user's top three most eaten food logs).
+   Pre-condition: "profiles.dat", "foodLogs.txt" must exist and contain valid data.
+*/
+void displayTopThree(User *profile) 
+{
+	int i, j;
+	
+    FILE *foodFile = fopen("foodLogs.txt", "r");
+    if (foodFile == NULL) 
+	{
+        printf("Error: Unable to open food logs file.\n");
+        return;
+    }
+
+    foodLog logs[51];
+    int count = 0;
+
+    int totalLogs = 0; 
+	while (fscanf(foodFile, "%50[^\n]\n%50s %[^\n]\n%c %d\n%10[^\n]\n%30[^\n]\n%300[^\n]\n",
+	              logs[totalLogs].name, logs[totalLogs].username, logs[totalLogs].fullname, 
+	              &logs[totalLogs].type, &logs[totalLogs].timesEaten, 
+	              logs[totalLogs].ftDate, logs[totalLogs].ftPlace, logs[totalLogs].desc) == 8) 
+	{
+	    if (strcmp(logs[totalLogs].username, profile->username) == 0) 
+	    {
+	        logs[count] = logs[totalLogs]; 
+	        count++; 
+	    }
+	    totalLogs++;
+	}
+
+    fclose(foodFile);
+
+    if (count == 0) 
+	{
+        printf("No food logs found for user %s.\n", profile->username);
+        return;
+    }
+
+    for (i = 0; i < count - 1; i++) 
+	{
+        int maxIndex = i;
+        for (j = i + 1; j < count; j++) 
+		{
+            if (logs[j].timesEaten > logs[maxIndex].timesEaten) 
+			{
+                maxIndex = j;
+            }
+        }
+        if (maxIndex != i) 
+		{
+            foodLog temp = logs[i];
+            logs[i] = logs[maxIndex];
+            logs[maxIndex] = temp;
+        }
+    }
+
+    printf("==============================================\n");
+    printf("|            TOP 5 MOST EATEN FOODS          |\n");
+    printf("==============================================\n");
+
+    for (i = 0; i < count && i < 5; i++) 
+	{
+        printf("[%d] %s - Eaten %d times\n", i + 1, logs[i].name, logs[i].timesEaten);
+    }
+
+    printf("==============================================\n");
+    system("pause");
+}
+
+/* 
+   displayTopThreeRecipes searches through the recipe logs to find the top three recipes 
+   with the shortest total preparation and cooking time.
+
+   @return void (displays the top three recipes with the shortest total time).
+   Pre-condition: "recipes.txt" must exist and contain valid data.
+*/
+void displayTopThreeRecipes() 
+{
+	int i,j;
+	
+    FILE *recipeFile = fopen("recipes.txt", "r");
+    if (recipeFile == NULL) 
+    {
+        printf("Error: Unable to open recipe file.\n");
+        return;
+    }
+
+    Recipe recipes[51]; 
+    int count = 0; 
+
+    while (fscanf(recipeFile, "%50[^\n]\n%50s %[^\n]\n%160[^\n]\n%d %d\n%d\n",
+                  recipes[count].name, recipes[count].username, recipes[count].fullname, 
+                  recipes[count].desc, &recipes[count].prepTime, &recipes[count].cookTime, 
+                  &recipes[count].numIng) == 7) 
+    {        
+        // ingredients
+        for (i = 0; i < recipes[count].numIng; i++) 
+        {
+            fscanf(recipeFile, "%80[^\n]\n", recipes[count].ingredients[i]);
+        }
+
+        // instructions
+        fscanf(recipeFile, "%d\n", &recipes[count].numInstructions);
+        for (i = 0; i < recipes[count].numInstructions; i++) 
+        {
+            fscanf(recipeFile, "%100[^\n]\n", recipes[count].instructions[i]);
+        }
+
+        count++; 
+    }
+    fclose(recipeFile);
+
+    if (count == 0) 
+    {
+        printf("No recipes found.\n");
+        return;
+    }
+
+    for (i = 0; i < count - 1; i++) 
+    {
+        int minIndex = i;
+        for (j = i + 1; j < count; j++) 
+        {
+            int time1 = recipes[j].prepTime + recipes[j].cookTime;
+            int time2 = recipes[minIndex].prepTime + recipes[minIndex].cookTime;
+            if (time1 < time2) 
+            {
+                minIndex = j;
+            }
+        }
+        if (minIndex != i) 
+        {
+            Recipe temp = recipes[i];
+            recipes[i] = recipes[minIndex];
+            recipes[minIndex] = temp;
+        }
+    }
+
+
+    printf("===========================================================\n");
+    printf("|                 TOP 3 SHORTEST TIME RECIPES             |\n");
+    printf("===========================================================\n");
+
+    for (i = 0; i < count && i < 3; i++) 
+    {
+  		int totalTime = recipes[i].prepTime + recipes[i].cookTime;      
+        printf("[%d] %s - Total Time: %d minutes (Prep: %d, Cook: %d)\n", 
+               i + 1, recipes[i].name, totalTime, recipes[i].prepTime, recipes[i].cookTime);
+    }
+
+    printf("===========================================================\n");
+    system("pause");
+}
+
 
 /* 
    searchFoodLog searches for a specific food log by name.

@@ -125,23 +125,31 @@ int main()
                         break;
                     case 11:
                     	system("cls");
-                        searchFoodLog();
+                        displayTopThree(&profile);
                         break;
                     case 12:
                     	system("cls");
-                        searchRecipe();
+                        displayTopThreeRecipes();
                         break;
                     case 13:
+                    	system("cls");
+                        searchFoodLog();
                         break;
                     case 14:
+                    	system("cls");
+                        searchRecipe();
                         break;
                     case 15:
+                        break;
+                    case 16:
+                        break;
+                    case 17:
                         printf("Exiting program...\n");
                         return 0;
                     default:
                         printf("Invalid choice. Please try again.\n");
                 }
-            } while (choice != 15 && loginSuccessful);
+            } while (choice != 17 && loginSuccessful);
         }
         loginSuccessful = 0;
     }
